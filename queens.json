@@ -113,7 +113,7 @@
     { "name": "Peppermint",                                        "image": "peppermint.webp",                                        "seasons": ["US S9"] },
     { "name": "Shea Couleé",                                       "image": "shea_coulee.webp",                                       "seasons": ["US S9", "US AS5", "US AS7"] },
     { "name": "Sasha Velour",                                      "image": "sasha_velour.webp",                                      "seasons": ["US S9"] },
-    { "name": "Vanessa Vanjie Mateo",                              "image": "vanessa_vanjie_mateo.webp",                              "seasons": ["US S10", "US S11", "US AS9"] },
+    { "name": "Vanessa Vanjie",                                    "image": "vanessa_vanjie.webp",                                    "seasons": ["US S10", "US S11", "US AS9"] },
     { "name": "Kalorie Karbdashian-Williams",                      "image": "kalorie_karbdashian_williams.webp",                      "seasons": ["US S10"] },
     { "name": "Yuhua Hamasaki",                                    "image": "yuhua_hamasaki.webp",                                    "seasons": ["US S10"] },
     { "name": "Dusty Ray Bottoms",                                 "image": "dusty_ray_bottoms.webp",                                 "seasons": ["US S10"] },
