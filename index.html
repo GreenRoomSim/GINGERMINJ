@@ -80,8 +80,7 @@
 
     .button-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
     button, .file-btn {
-      border: none; border-radius: 16px; padding: 12px 16px;
-      font-size: 15px; font-weight: 700; cursor: pointer; transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+      border: none; border-radius: 16px; padding: 12px 16px; font-size: 15px; font-weight: 700; cursor: pointer; transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
       box-shadow: 0 8px 18px rgba(80, 125, 48, 0.16); text-align: center;
     }
     button:hover, .file-btn:hover { transform: translateY(-1px); }
@@ -197,7 +196,7 @@
   <div class="app">
     <div class="hero">
       <h1 class="title">Greenroom Drag Race Simulator</h1>
-      <p class="subtitle">Release v1.9.0 - Last Updated 16/4/26</p>
+      <p class="subtitle">Release v2.0.0 - Last Updated 16/4/26</p>
       
       <div class="button-row" style="margin-top: 16px;">
         <button id="preDefBtn" class="primary" style="padding: 8px 16px; font-size: 14px;">Pre-Defined Casts</button>
@@ -443,6 +442,7 @@
                 <select id="seasonFormatSelect">
                   <option value="regular">Regular Season</option>
                   <option value="all-stars-legacy">All Stars (Lip Sync For Your Legacy)</option>
+                  <option value="all-stars-assassin">All Stars (Lip Sync Assassin)</option>
                 </select>
               </label>
               
@@ -522,6 +522,7 @@
     const MAX_CAST = 16;
     
     let allRealQueens = [];
+
     // Load Real Queens from JSON file
     fetch('queens.json')
       .then(response => response.json())
@@ -793,8 +794,7 @@
     }
 
     function clearQueenForm() {
-      el.queenNameInput.value = ""; el.comedyInput.value = 5;
-      el.designInput.value = 5; el.performanceInput.value = 5; el.actingInput.value = 5; el.lipSyncInput.value = 5;
+      el.queenNameInput.value = ""; el.comedyInput.value = 5; el.designInput.value = 5; el.performanceInput.value = 5; el.actingInput.value = 5; el.lipSyncInput.value = 5;
     }
 
     function updateSetupUI() {
@@ -908,6 +908,7 @@
     function prepareEpisode() {
       const actives = activeQueens();
       const n = actives.length;
+
       // LaLaPaRuza Trigger Check
       if (state.lalaPaRuzaEnabled && n === 8 && !state.usedMaxis.includes("LaLaPaRuza")) {
           state.usedMaxis.push("LaLaPaRuza");
@@ -953,6 +954,7 @@
         const score = rand(1, 10) + q.stats[statKey] * rand(0.8, 1.5) + rand(-1, 1);
         return { queen: q, score };
       }).sort((a, b) => b.score - a.score);
+
       let categories = new Map();
       let winners = [], highQueens = [], pureSafe = [], savedLow = null, lowQueens = [], bottomTwo = [];
       let isGG = false;
@@ -973,15 +975,18 @@
           let teamB = shuffled.slice(Math.floor(n/2));
           let nameA = pick(girlGroupNames);
           let nameB = pick(girlGroupNames.filter(name => name !== nameA));
+
           let scoreA = teamA.reduce((sum, item) => sum + item.score, 0);
           let scoreB = teamB.reduce((sum, item) => sum + item.score, 0);
           let winningTeam = scoreA > scoreB ? teamA : teamB;
           let losingTeam = scoreA > scoreB ? teamB : teamA;
           let winningName = scoreA > scoreB ? nameA : nameB;
           let losingName = scoreA > scoreB ? nameB : nameA;
+
           losingTeam.sort((a, b) => b.score - a.score);
           winners = winningTeam.map(i => i.queen);
           winningTeam.forEach(i => categories.set(i.queen.id, "Slayed"));
+          
           let lQueens = losingTeam.map(i => i.queen);
           bottomTwo = lQueens.slice(-2);
           savedLow = lQueens.length > 2 ? lQueens[lQueens.length - 3] : null;
@@ -997,6 +1002,7 @@
               teamB: { name: nameB, queens: teamB.map(i => i.queen) },
               winningName, losingName
           };
+
       } else if (isMidSeasonNonElim) {
           scores.forEach((entry, idx) => {
               let label = "Okay";
@@ -1013,6 +1019,67 @@
               mini, maxi, categories, scores,
               placements: { topTwo: top2, highQueens: high, pureSafe: safe, bottomThree: [], bottomTwo: [], savedLow: null, winners: [] },
               countsApplied: false, lipSync: null, elimination: null, riggedOutcome: null, isMidSeasonNonElim: true
+          };
+          return;
+      } else if (state.seasonFormat === "all-stars-assassin") {
+          let topOne = [scores[0].queen];
+          let asHighQueens = [];
+          let asBottomTwo = [];
+          let asSavedLow = null;
+
+          if (n <= 4) {
+              asBottomTwo = scores.slice(1).map(s => s.queen);
+          } else {
+              asHighQueens = [scores[1].queen, scores[2].queen];
+              if (n > 6) {
+                  asBottomTwo = [scores[n-2].queen, scores[n-1].queen];
+                  asSavedLow = scores[n-3].queen;
+              } else {
+                  asBottomTwo = [scores[n-2].queen, scores[n-1].queen];
+              }
+          }
+          let placedIds = [...topOne, ...asHighQueens, ...asBottomTwo, asSavedLow].filter(Boolean).map(q => q.id);
+          let asPureSafe = actives.filter(q => !placedIds.includes(q.id));
+
+          // Group Vote Logic
+          let groupVoters = actives.filter(q => q.id !== topOne[0].id);
+          let votes = {};
+          asBottomTwo.forEach(q => votes[q.id] = 0);
+          groupVoters.forEach(v => {
+              let voteFor = pick(asBottomTwo); 
+              votes[voteFor.id]++;
+          });
+
+          // Find max votes
+          let maxVotes = 0;
+          let groupChoice = [];
+          for (let id in votes) {
+              if (votes[id] > maxVotes) {
+                  maxVotes = votes[id];
+                  groupChoice = [asBottomTwo.find(q => q.id == id)];
+              } else if (votes[id] === maxVotes) {
+                  groupChoice.push(asBottomTwo.find(q => q.id == id));
+              }
+          }
+          let isTie = groupChoice.length > 1;
+
+          // Top All Star choice
+          let topChoice = pick(asBottomTwo);
+
+          // Pick LSA
+          let availableLSA = allRealQueens.filter(rq => !state.queens.some(sq => sq.name === rq.name) && rq.stats && rq.stats[4] >= 8);
+          if (!availableLSA.length) availableLSA = allRealQueens.filter(rq => !state.queens.some(sq => sq.name === rq.name));
+          if (!availableLSA.length) availableLSA = [{name: "Mystery Queen", image: "", stats: [5,5,5,5,10]}];
+          let lsa = pick(availableLSA);
+          let lsaQueenObj = {
+              name: lsa.name, image: lsa.image, stats: { lipSync: lsa.stats ? lsa.stats[4] : 10 }
+          };
+
+          state.episodeData = {
+              mini, maxi, categories, scores,
+              placements: { topOne, highQueens: asHighQueens, pureSafe: asPureSafe, savedLow: asSavedLow, bottomTwo: asBottomTwo, winners: [] },
+              lsaData: { lsa: lsaQueenObj, topChoice, groupChoice, isTie, votes, tieBreakerNeeded: false },
+              countsApplied: false, lipSync: null, elimination: null, riggedOutcome: null, tieBreakApplied: false
           };
           return;
       } else {
@@ -1093,19 +1160,26 @@
       const active = activeQueens();
       const data = state.episodeData;
       const isGG = data.isGirlGroup;
+      const isAssassin = state.seasonFormat === "all-stars-assassin";
       
       el.gameHeader.textContent = `Episode ${state.episodeNumber}`;
       el.gameMeta.textContent = `${active.length} queens remaining • ${state.queens.length} in cast`;
 
-      const totalScreens = isGG ? 8 : (data.isLaLaPaRuza ? 8 : 7);
+      let totalScreens = isGG ? 8 : (data.isLaLaPaRuza ? 8 : 7);
+      if (isAssassin) {
+          totalScreens = (data.lsaData && data.lsaData.tieBreakerNeeded) ? 9 : 8;
+      }
       el.screenCounterText.textContent = `Screen ${state.phase} of ${totalScreens}`;
+
       // Rig Button Toggle Logic
       el.rigGameBtn.classList.toggle("hidden", 
           (isGG && state.phase !== 4 && state.phase !== 6) ||
           (data.isLaLaPaRuza && state.phase !== 6) ||
-          (!isGG && !data.isLaLaPaRuza && state.phase !== 3 && state.phase !== 5)
+          (isAssassin && state.phase !== 3 && state.phase !== 6) ||
+          (!isGG && !data.isLaLaPaRuza && !isAssassin && state.phase !== 3 && state.phase !== 5)
       );
-      // Phase Translator mapping specifically to handle Girl Group shifts
+
+      // Phase Translator mapping specifically to handle Girl Group shifts and Assassin shifts
       let phaseTag = state.phase;
       if (isGG) {
           if (state.phase === 2) phaseTag = "gg_teams";
@@ -1113,10 +1187,20 @@
       }
       if (data.isLaLaPaRuza) {
           if (state.phase === 8) {
-              phaseTag = 7; // Maps the final stats screen to the track record
+              phaseTag = 7;
           } else {
-              phaseTag = "lala"; // Labels all other screens (1-7) as the tournament
+              phaseTag = "lala";
           }
+      }
+      if (isAssassin && !data.isLaLaPaRuza && !isGG) {
+          if (state.phase === 5) phaseTag = "lsa_ruveal";
+          else if (state.phase === 6) phaseTag = "lsa_lipsync";
+          else if (state.phase === 7) phaseTag = "lsa_elim";
+          else if (state.phase === 8) {
+              if (data.lsaData.tieBreakerNeeded) phaseTag = "lsa_tie_elim";
+              else phaseTag = 7; // Map to Recap
+          }
+          else if (state.phase === 9) phaseTag = 7; // Map to Recap
       }
 
       let content = "";
@@ -1372,6 +1456,10 @@
                     tops = [...data.placements.topTwo, ...data.placements.highQueens];
                     bottoms = [...(data.placements.savedLow ? [data.placements.savedLow] : []), ...data.placements.bottomTwo];
                     safes = [...data.placements.pureSafe];
+                } else if (isAssassin) {
+                    tops = [...data.placements.topOne, ...data.placements.highQueens];
+                    bottoms = [...(data.placements.savedLow ? [data.placements.savedLow] : []), ...data.placements.bottomTwo];
+                    safes = [...data.placements.pureSafe];
                 } else if (state.episodeNumber === 1 && state.premiereFormat === "top2") {
                     tops = [...data.placements.topTwo, ...data.placements.highQueens];
                     bottoms = [...(data.placements.bottomThree || []), ...(data.placements.savedLow ? [data.placements.savedLow] : []), ...(data.placements.bottomTwo || [])];
@@ -1409,6 +1497,12 @@
             if (!data.countsApplied) {
               const epIndex = state.episodeNumber - 1;
               if (state.seasonFormat === "all-stars-legacy") {
+                  data.placements.highQueens.forEach(q => { q.record.HIGH += 1; q.history[epIndex] = "HIGH"; });
+                  data.placements.pureSafe.forEach(q => { q.record.SAFE += 1; q.history[epIndex] = "SAFE"; });
+                  if (data.placements.savedLow) { data.placements.savedLow.record.LOW += 1; data.placements.savedLow.history[epIndex] = "LOW"; }
+                  data.placements.bottomTwo.forEach(q => { q.record.BTM2 += 1; q.history[epIndex] = "BTM"; });
+              } else if (isAssassin) {
+                  data.placements.topOne.forEach(q => { q.record.WIN += 1; q.history[epIndex] = "WIN"; });
                   data.placements.highQueens.forEach(q => { q.record.HIGH += 1; q.history[epIndex] = "HIGH"; });
                   data.placements.pureSafe.forEach(q => { q.record.SAFE += 1; q.history[epIndex] = "SAFE"; });
                   if (data.placements.savedLow) { data.placements.savedLow.record.LOW += 1; data.placements.savedLow.history[epIndex] = "LOW"; }
@@ -1464,6 +1558,33 @@
                       <div class="group-row">
                         <div class="flex-center">${p.topTwo.map(q => `<div class="placement-card bg-win">${escapeHtml(q.name)}</div>`).join("")}</div>
                         <p class="muted">Condragulations, you are the Top 2 queens of the week!</p>
+                      </div>
+                      ${p.highQueens.length ? `
+                      <div class="group-row">
+                        <div class="flex-center">${p.highQueens.map(q => `<div class="placement-card bg-high">${escapeHtml(q.name)}</div>`).join("")}</div>
+                        <p class="muted">Good job this week, you're safe.</p>
+                      </div>` : ""}
+                      ${p.savedLow ? `
+                      <div class="group-row">
+                        <div class="flex-center"><div class="placement-card bg-low">${escapeHtml(p.savedLow.name)}</div></div>
+                        <p class="muted">You are safe, but step it up.</p>
+                      </div>` : ""}
+                      <div class="group-row" style="border:none;">
+                        <div class="flex-center">${p.bottomTwo.map(q => `<div class="placement-card bg-btm">${escapeHtml(q.name)}</div>`).join("")}</div>
+                        <p class="muted">I'm sorry my dears but you are the bottom queens of the week.</p>
+                      </div>
+                    </div>
+                  </div>
+                `;
+            } else if (isAssassin) {
+                content = `
+                  <div class="section-card">
+                    <div class="label-row"><span class="pill">Screen ${state.phase}</span><span class="pill">Results</span></div>
+                    <p class="muted" style="margin-bottom:16px;">Ladies, I've made some decisions...</p>
+                    <div class="flex-col-center">
+                      <div class="group-row">
+                        <div class="flex-center">${p.topOne.map(q => `<div class="placement-card bg-win">${escapeHtml(q.name)}</div>`).join("")}</div>
+                        <p class="muted">Condragulations, you are the Top All Star of the week!</p>
                       </div>
                       ${p.highQueens.length ? `
                       <div class="group-row">
@@ -1540,7 +1661,18 @@
                   </div>
                 `;
             }
-          } else if (phaseTag === 5 && !data.isLaLaPaRuza) {
+          } else if (phaseTag === "lsa_ruveal") {
+              content = `
+                <div class="section-card flex-col-center">
+                  <div class="label-row"><span class="pill">Screen ${state.phase}</span><span class="pill">Assassin Ruveal</span></div>
+                  <p class="muted">Will the secret Lip Sync Assassin please Ruveal yourself?</p>
+                  <p class="big-message" style="margin-top:16px; color:var(--danger);">${escapeHtml(data.lsaData.lsa.name)}!</p>
+                  <div class="flex-center">
+                     ${data.lsaData.lsa.image ? `<img src="${escapeHtml(data.lsaData.lsa.image)}" style="width:100px; height:100px; border-radius:50%; object-fit:cover;">` : ''}
+                  </div>
+                </div>
+              `;
+          } else if (phaseTag === 5 && !data.isLaLaPaRuza && !isAssassin) {
             if (!data.lipSync) {
               let p1, p2;
               if (state.seasonFormat === "all-stars-legacy" || (state.episodeNumber === 1 && state.premiereFormat === "top2") || data.isMidSeasonNonElim) {
@@ -1589,7 +1721,136 @@
                 </div>
               </div>
             `;
-          } else if (phaseTag === 6 && !data.isLaLaPaRuza) {
+          } else if (phaseTag === "lsa_lipsync") {
+              if (!data.lipSync) {
+                  let p1 = data.placements.topOne[0];
+                  let p2 = data.lsaData.lsa;
+                  const e1 = rollLipEvent(); const e2 = rollLipEvent();
+                  let s1 = rand(1,10) + p1.stats.lipSync; if(e1.type==="words") s1-=99; if(e1.type==="fall") s1-=2; if(e1.type==="reveal") s1+=2;
+                  let s2 = rand(1,10) + p2.stats.lipSync; if(e2.type==="words") s2-=99; if(e2.type==="fall") s2-=2; if(e2.type==="reveal") s2+=2;
+                  
+                  let winner = s1 >= s2 ? {queen: p1, event: e1} : {queen: p2, event: e2};
+                  let loser = s1 >= s2 ? {queen: p2, event: e2} : {queen: p1, event: e1};
+                  
+                  data.lipSync = { song: pick(lipSongs), performances: [{queen: p1, event: e1}, {queen: p2, event: e2}], winner, loser, s1, s2 };
+                  
+                  if (data.riggedOutcome === "w1") data.lipSync.winner.queen = p1;
+                  if (data.riggedOutcome === "w2") data.lipSync.winner.queen = p2;
+
+                  if (data.lipSync.winner.queen.name === p2.name && data.lsaData.isTie) {
+                      data.lsaData.tieBreakerNeeded = true;
+                      el.screenCounterText.textContent = `Screen ${state.phase} of 9`;
+                  }
+              }
+
+              content = `
+                <div class="section-card">
+                  <div class="label-row"><span class="pill">Screen ${state.phase}</span><span class="pill">The time has come...</span></div>
+                  <p class="muted">Two queens stand before me. Prior to tonight, you were asked to prepare a lip sync performance... for your legacy! Good luck, and don't f*ck it up.</p>
+                  <p class="big-message" style="margin: 16px 0;">${escapeHtml(data.lipSync.song)}</p>
+                  <div class="flex-center" style="align-items: stretch; gap: 16px;">
+                    ${data.lipSync.performances.map(p => `
+                      <div style="text-align:center; width: 160px; display: flex; flex-direction: column;">
+                        <div class="placement-card bg-safe" style="flex: 1;">${escapeHtml(p.queen.name)}</div>
+                        <p class="muted" style="margin-top:6px; font-size:13px;">${p.event.text}</p>
+                      </div>
+                    `).join("")}
+                  </div>
+                </div>
+              `;
+          } else if (phaseTag === "lsa_elim") {
+              if (!data.elimination) {
+                  let isTopWin = data.lipSync.winner.queen.name === data.placements.topOne[0].name;
+                  
+                  let eliminatedQueen;
+                  if (isTopWin) {
+                      eliminatedQueen = data.lsaData.topChoice;
+                  } else {
+                      if (data.lsaData.isTie) eliminatedQueen = null; 
+                      else eliminatedQueen = data.lsaData.groupChoice[0];
+                  }
+                  
+                  if (eliminatedQueen) {
+                      eliminatedQueen.record.ELIM += 1; eliminatedQueen.eliminated = true; eliminatedQueen.elimOrder = state.episodeNumber;
+                      eliminatedQueen.history[state.episodeNumber - 1] = "ELIM";
+                  }
+                  
+                  data.elimination = { isTopWin, eliminatedQueen };
+              }
+
+              let e = data.elimination;
+              let elimContent = "";
+              if (e.isTopWin) {
+                  elimContent = `
+                    <div class="group-row">
+                      <div class="placement-card bg-win">${escapeHtml(data.placements.topOne[0].name)}</div>
+                      <p class="muted">You're a winner baby! You have earned a cash tip of $10,000.</p>
+                    </div>
+                    <div class="group-row" style="border:none;">
+                      <p class="muted">With great power comes great responsibility. Who have you chosen to get the chop?</p>
+                      <div class="placement-card bg-elim">${escapeHtml(e.eliminatedQueen.name)}</div>
+                      <p class="muted" style="margin-top: 8px;">As it is written, so it shall be done. Sashay away.</p>
+                    </div>
+                  `;
+              } else {
+                  if (data.lsaData.tieBreakerNeeded) {
+                      elimContent = `
+                        <div class="group-row">
+                          <div class="placement-card bg-win">${escapeHtml(data.lsaData.lsa.name)}</div>
+                          <p class="muted">You're a winner baby!</p>
+                        </div>
+                        <div class="group-row" style="border:none;">
+                          <p class="muted">Now, Lip Sync Assassin, reveal the group's vote.</p>
+                          <div class="flex-center" style="margin-top:8px; margin-bottom:8px;">
+                              ${data.lsaData.groupChoice.map(q => `<div class="placement-card bg-elim">${escapeHtml(q.name)}</div>`).join("")}
+                          </div>
+                          <p class="muted" style="color:var(--danger); font-weight:800;">It's a TIE!</p>
+                          <p class="muted">Because of the tie, the power to eliminate returns to the Top All Star.</p>
+                        </div>
+                      `;
+                  } else {
+                      elimContent = `
+                        <div class="group-row">
+                          <div class="placement-card bg-win">${escapeHtml(data.lsaData.lsa.name)}</div>
+                          <p class="muted">You're a winner baby!</p>
+                        </div>
+                        <div class="group-row" style="border:none;">
+                          <p class="muted">Now, Lip Sync Assassin, reveal the group's vote. The group has chosen...</p>
+                          <div class="placement-card bg-elim">${escapeHtml(e.eliminatedQueen.name)}</div>
+                          <p class="muted" style="margin-top: 8px;">As it is written, so it shall be done. Sashay away.</p>
+                        </div>
+                      `;
+                  }
+              }
+              
+              content = `
+                <div class="section-card">
+                  <div class="label-row"><span class="pill">Screen ${state.phase}</span><span class="pill">Decisions...</span></div>
+                  <div class="flex-col-center" style="margin-top:16px;">
+                    ${elimContent}
+                  </div>
+                </div>
+              `;
+          } else if (phaseTag === "lsa_tie_elim") {
+              if (!data.tieBreakApplied) {
+                  let eliminatedQueen = data.lsaData.topChoice;
+                  eliminatedQueen.record.ELIM += 1; eliminatedQueen.eliminated = true; eliminatedQueen.elimOrder = state.episodeNumber;
+                  eliminatedQueen.history[state.episodeNumber - 1] = "ELIM";
+                  data.tieBreakApplied = true;
+              }
+              content = `
+                <div class="section-card">
+                  <div class="label-row"><span class="pill">Screen ${state.phase}</span><span class="pill">Tie Breaker</span></div>
+                  <div class="flex-col-center" style="margin-top:16px;">
+                    <div class="group-row" style="border:none;">
+                      <p class="muted">${escapeHtml(data.placements.topOne[0].name)}, as the Top All Star, you must break the tie. Who have you chosen to get the chop?</p>
+                      <div class="placement-card bg-elim">${escapeHtml(data.lsaData.topChoice.name)}</div>
+                      <p class="muted" style="margin-top: 8px;">As it is written, so it shall be done. Sashay away.</p>
+                    </div>
+                  </div>
+                </div>
+              `;
+          } else if (phaseTag === 6 && !data.isLaLaPaRuza && !isAssassin) {
             if (!data.elimination) {
               let w = data.lipSync.winner.queen;
               let l = data.lipSync.loser.queen;
@@ -1606,13 +1867,11 @@
 
               if (state.seasonFormat === "all-stars-legacy") {
                   if (state.episodeNumber === 1 && (state.premiereFormat === "no-elim" || state.premiereFormat === "top2")) {
-                      w.record.WIN += 1;
-                      w.history[state.episodeNumber - 1] = "WIN";
+                      w.record.WIN += 1; w.history[state.episodeNumber - 1] = "WIN";
                       l.record.TOP2 = (l.record.TOP2 || 0) + 1; l.history[state.episodeNumber - 1] = "TOP 2";
                       data.elimination = { legacyNoElim: true, winner: w, top2loser: l };
                   } else {
-                      w.record.WIN += 1;
-                      w.history[state.episodeNumber - 1] = "WIN";
+                      w.record.WIN += 1; w.history[state.episodeNumber - 1] = "WIN";
                       l.record.TOP2 = (l.record.TOP2 || 0) + 1; l.history[state.episodeNumber - 1] = "TOP 2";
                       const btmQueens = data.placements.bottomTwo;
                       const eliminatedQueen = pick(btmQueens); 
@@ -1622,30 +1881,25 @@
                       data.elimination = { legacy: true, winner: w, top2loser: l, eliminated: eliminatedQueen };
                   }
               } else if (state.episodeNumber === 1 && state.premiereFormat === "top2") {
-                  w.record.WIN += 1;
-                  w.history[0] = "WIN";
+                  w.record.WIN += 1; w.history[0] = "WIN";
                   l.record.TOP2 = (l.record.TOP2 || 0) + 1; l.history[0] = "TOP 2";
                   data.elimination = { top2LipSync: true, winner: w, loser: l };
               } else if (data.isMidSeasonNonElim) {
-                  w.record.WIN += 1;
-                  w.history[state.episodeNumber - 1] = "WIN";
+                  w.record.WIN += 1; w.history[state.episodeNumber - 1] = "WIN";
                   l.record.TOP2 = (l.record.TOP2 || 0) + 1; l.history[state.episodeNumber - 1] = "TOP 2";
                   data.elimination = { top2LipSync: true, winner: w, loser: l };
               } else if (state.episodeNumber === 1 && state.premiereFormat === "no-elim") {
-                  const q1 = data.lipSync.performances[0].queen;
-                  const q2 = data.lipSync.performances[1].queen;
+                  const q1 = data.lipSync.performances[0].queen; const q2 = data.lipSync.performances[1].queen;
                   data.elimination = { doubleShantay: true, forcedNoElim: true, q1, q2 };
               } else if (isDoubleShantay) {
                   data.elimination = { doubleShantay: true, q1: data.lipSync.performances[0].queen, q2: data.lipSync.performances[1].queen };
               } else if (isDoubleSashay) {
-                  const q1 = data.lipSync.performances[0].queen;
-                  const q2 = data.lipSync.performances[1].queen;
+                  const q1 = data.lipSync.performances[0].queen; const q2 = data.lipSync.performances[1].queen;
                   q1.record.ELIM += 1; q1.eliminated = true; q1.elimOrder = state.episodeNumber; q1.history[state.episodeNumber - 1] = "ELIM";
                   q2.record.ELIM += 1; q2.eliminated = true; q2.elimOrder = state.episodeNumber; q2.history[state.episodeNumber - 1] = "ELIM";
                   data.elimination = { doubleSashay: true, q1, q2 };
               } else {
-                  l.record.ELIM += 1;
-                  l.eliminated = true; l.elimOrder = state.episodeNumber; l.history[state.episodeNumber - 1] = "ELIM";
+                  l.record.ELIM += 1; l.eliminated = true; l.elimOrder = state.episodeNumber; l.history[state.episodeNumber - 1] = "ELIM";
                   data.elimination = { survivor: w, eliminated: l };
               }
             }
@@ -1789,6 +2043,9 @@
       let totalPhases = 7;
       if (state.episodeData) {
           if (state.episodeData.isGirlGroup || state.episodeData.isLaLaPaRuza) totalPhases = 8;
+          if (state.seasonFormat === "all-stars-assassin") {
+              totalPhases = (state.episodeData.lsaData && state.episodeData.lsaData.tieBreakerNeeded) ? 9 : 8;
+          }
       }
       
       if (state.phase < totalPhases) { state.phase++; renderEpisode(); }
@@ -2148,18 +2405,21 @@
     el.rigGameBtn.addEventListener("click", () => {
         const p = state.episodeData.placements;
         let isTop2Format = (state.seasonFormat === "all-stars-legacy" || (state.episodeNumber === 1 && state.premiereFormat === "top2") || state.episodeData.isMidSeasonNonElim);
+        let isTop1Format = state.seasonFormat === "all-stars-assassin";
         let html = "";
         const isGG = state.episodeData.isGirlGroup;
         const isLaLa = state.episodeData.isLaLaPaRuza;
 
-        if ((isGG && state.phase === 4) || (!isGG && !isLaLa && state.phase === 3)) {
-            let tops = isTop2Format ? [...p.topTwo, ...p.highQueens] : [...p.winners, ...p.highQueens];
+        if ((isGG && state.phase === 4) || (!isGG && !isLaLa && state.phase === 3) || (isTop1Format && state.phase === 3)) {
+            let tops = isTop2Format ? [...p.topTwo, ...p.highQueens] : (isTop1Format ? [...p.topOne, ...p.highQueens] : [...p.winners, ...p.highQueens]);
             let bottoms = p.bottomThree ? [...p.bottomThree] : [...(p.savedLow ? [p.savedLow] : []), ...(p.bottomTwo || [])];
             
             if (!isGG) {
                 if (isTop2Format) {
                     html += `<label class="field" style="margin-bottom:8px;">Select Top 2 Queen 1: <select id="rigTop1">${tops.map(q => `<option value="${q.id}">${q.name}</option>`).join('')}</select></label>`;
                     html += `<label class="field" style="margin-bottom:8px;">Select Top 2 Queen 2: <select id="rigTop2">${tops.map(q => `<option value="${q.id}">${q.name}</option>`).join('')}</select></label>`;
+                } else if (isTop1Format) {
+                    html += `<label class="field" style="margin-bottom:8px;">Select Top All Star: <select id="rigTop1">${tops.map(q => `<option value="${q.id}">${q.name}</option>`).join('')}</select></label>`;
                 } else {
                     html += `<label class="field" style="margin-bottom:8px;">Select Winner: <select id="rigWin">${tops.map(q => `<option value="${q.id}">${q.name}</option>`).join('')}</select></label>`;
                     if (p.winners && p.winners.length === 2) {
@@ -2177,7 +2437,7 @@
             el.rigModal.dataset.rigType = "ep3";
             el.rigContent.innerHTML = html;
             el.rigModal.classList.remove("hidden");
-        } else if ((isGG && state.phase === 6) || (isLaLa && state.phase === 6) || (!isGG && !isLaLa && state.phase === 5)) {
+        } else if ((isGG && state.phase === 6) || (isLaLa && state.phase === 6) || (isTop1Format && state.phase === 6) || (!isGG && !isLaLa && !isTop1Format && state.phase === 5)) {
             let p1, p2;
             let canDoubleSashay = false;
             let isTop2LipSyncTrigger = false;
@@ -2185,7 +2445,11 @@
             if (isLaLa) {
                 p1 = state.episodeData.r3Match.p1;
                 p2 = state.episodeData.r3Match.p2;
-                isTop2LipSyncTrigger = true; // Treats it like a top 2 format so you cant select double elim/shantay
+                isTop2LipSyncTrigger = true; 
+            } else if (isTop1Format) {
+                p1 = state.episodeData.placements.topOne[0];
+                p2 = state.episodeData.lsaData.lsa;
+                isTop2LipSyncTrigger = true;
             } else {
                 p1 = state.episodeData.lipSync.performances[0].queen;
                 p2 = state.episodeData.lipSync.performances[1].queen;
@@ -2242,7 +2506,8 @@
         if (rt === "ep3") {
             const p = state.episodeData.placements;
             let isTop2Format = (state.seasonFormat === "all-stars-legacy" || (state.episodeNumber === 1 && state.premiereFormat === "top2") || state.episodeData.isMidSeasonNonElim);
-            let tops = isTop2Format ? [...p.topTwo, ...p.highQueens] : [...p.winners, ...p.highQueens];
+            let isTop1Format = state.seasonFormat === "all-stars-assassin";
+            let tops = isTop2Format ? [...p.topTwo, ...p.highQueens] : (isTop1Format ? [...p.topOne, ...p.highQueens] : [...p.winners, ...p.highQueens]);
             let bottoms = p.bottomThree ? [...p.bottomThree] : [...(p.savedLow ? [p.savedLow] : []), ...(p.bottomTwo || [])];
 
             if (!state.episodeData.isGirlGroup) {
@@ -2252,6 +2517,10 @@
                     if(t1 === t2) return alert("Must select two different queens for Top 2.");
                     p.topTwo = tops.filter(q => q.id == t1 || q.id == t2);
                     p.highQueens = tops.filter(q => q.id != t1 && q.id != t2);
+                } else if (isTop1Format) {
+                    let t1 = document.getElementById("rigTop1").value;
+                    p.topOne = tops.filter(q => q.id == t1);
+                    p.highQueens = tops.filter(q => q.id != t1);
                 } else {
                     let w = document.getElementById("rigWin").value;
                     if (document.getElementById("rigWin2")) {
