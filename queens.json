@@ -101,7 +101,8 @@
       "name": "Mystique Summers Madison",
       "image": "mystique_summers_madison.webp",
       "seasons": [
-        "US S2"
+        "US S2",
+        "US AS11"
       ],
       "stats": [5, 4, 4, 4, 4]
     },
@@ -146,7 +147,8 @@
       "image": "morgan_mcmichaels.webp",
       "seasons": [
         "US S2",
-        "US AS3"
+        "US AS3",
+        "US AS11"
       ],
       "stats": [6, 7, 8, 5, 8]
     },
@@ -440,7 +442,8 @@
       "name": "Vivacious",
       "image": "vivacious.webp",
       "seasons": [
-        "US S6"
+        "US S6",
+        "US As11"
       ],
       "stats": [5, 7, 5, 3, 3]
     },
@@ -448,7 +451,8 @@
       "name": "April Carrion",
       "image": "april_carrion.webp",
       "seasons": [
-        "US S6"
+        "US S6",
+        "US AS11"
       ],
       "stats": [4, 8, 6, 4, 6]
     },
@@ -627,7 +631,8 @@
       "image": "kennedy_davenport.webp",
       "seasons": [
         "US S7",
-        "US AS3"
+        "US AS3",
+        "US AS11"
       ],
       "stats": [5, 6, 10, 5, 10]
     },
@@ -1053,7 +1058,8 @@
       "name": "Shuga Cain",
       "image": "shuga_cain.webp",
       "seasons": [
-        "US S11"
+        "US S11",
+        "US AS11"
       ],
       "stats": [7, 7, 7, 6, 6]
     },
@@ -1080,7 +1086,8 @@
       "image": "silky_nutmeg_ganache.webp",
       "seasons": [
         "US S11",
-        "US AS6"
+        "US AS6",
+        "US AS11"
       ],
       "stats": [9, 7, 8, 8, 7]
     },
@@ -1089,7 +1096,8 @@
       "image": "a_keria_c_davenport.webp",
       "seasons": [
         "US S11",
-        "US AS6"
+        "US AS6",
+        "US AS11"
       ],
       "stats": [7, 9, 8, 6, 8]
     },
@@ -1188,7 +1196,8 @@
       "name": "Crystal Methyd",
       "image": "crystal_methyd.webp",
       "seasons": [
-        "US S12"
+        "US S12",
+        "US AS11"
       ],
       "stats": [9, 9, 7, 9, 6]
     },
@@ -1229,7 +1238,8 @@
       "name": "Joey Jay",
       "image": "joey_jay.webp",
       "seasons": [
-        "US S13"
+        "US S13",
+        "US AS11"
       ],
       "stats": [6, 6, 7, 5, 6]
     },
@@ -1381,7 +1391,8 @@
       "name": "Jasmine Kennedie",
       "image": "jasmine_kennedie.webp",
       "seasons": [
-        "US S14"
+        "US S14",
+        "US AS11"
       ],
       "stats": [7, 6, 9, 6, 9]
     },
@@ -1492,7 +1503,8 @@
       "name": "Aura Mayari",
       "image": "aura_mayari.webp",
       "seasons": [
-        "US S15"
+        "US S15",
+        "US AS11"
       ],
       "stats": [6, 7, 7, 6, 7]
     },
@@ -1532,7 +1544,8 @@
       "name": "Salina EsTitties",
       "image": "salina_estitties.webp",
       "seasons": [
-        "US S15"
+        "US S15",
+        "US AS11"
       ],
       "stats": [7, 6, 8, 7, 8]
     },
@@ -1629,7 +1642,8 @@
       "name": "Dawn",
       "image": "dawn.webp",
       "seasons": [
-        "US S16"
+        "US S16",
+        "US AS11"
       ],
       "stats": [7, 9, 7, 8, 6]
     },
@@ -1637,7 +1651,8 @@
       "name": "Morphine Love Dion",
       "image": "morphine_love_dion.webp",
       "seasons": [
-        "US S16"
+        "US S16",
+        "US AS11"
       ],
       "stats": [7, 8, 8, 7, 8]
     },
@@ -1677,7 +1692,8 @@
       "name": "Hershii LiqCour-Jeté",
       "image": "hershii_liqcour_jete.webp",
       "seasons": [
-        "US S16"
+        "US S16",
+        "US AS11"
       ],
       "stats": [6, 6, 7, 6, 7]
     },
@@ -1701,7 +1717,8 @@
       "name": "Lucky Starzzz",
       "image": "lucky_starzzz.webp",
       "seasons": [
-        "US S17"
+        "US S17",
+        "US AS11"
       ],
       "stats": [6, 7, 7, 6, 6]
     },
@@ -1782,7 +1799,8 @@
       "name": "Sam Star",
       "image": "sam_star.webp",
       "seasons": [
-        "US S17"
+        "US S17",
+        "US AS11"
       ],
       "stats": [7, 7, 7, 7, 6]
     },
