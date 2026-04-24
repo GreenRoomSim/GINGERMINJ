@@ -427,8 +427,9 @@
           <div class="patch-notes-content">
             <h3>v2.0 - Update</h3>
             <ul>
+              <li>Added Lip Sync Assassin Format</li>
               <li>Added Tournament Of All Stars Format</li>
-              <li>Added All Stars 11 to Rumoured Casts</li>
+              <li>Added All Stars 11 to Pre-Defined Casts</li>
             </ul>
 
             <h3>v1.9.0 - Update</h3>
@@ -2581,10 +2582,13 @@ if (state.seasonFormat === "tournament-of-all-stars") {
   }
     });
     function makeMatch(q1, q2) {
-      let power1 = trackScore(q1) + (q1.record.WIN * 10);
-      let power2 = trackScore(q2) + (q2.record.WIN * 10);
-      if (power1 === power2) { power1 += Math.random(); power2 += Math.random(); }
-      return power1 >= power2 ? {winner: q1, loser: q2} : {winner: q2, loser: q1};
+      // Calculate power based on track record, their lip sync stat, AND a large random factor
+      let power1 = trackScore(q1) + (q1.record.WIN * 10) + (q1.stats.lipSync * 3) + (Math.random() * 40);
+      let power2 = trackScore(q2) + (q2.record.WIN * 10) + (q2.stats.lipSync * 3) + (Math.random() * 40);
+      
+      return power1 >= power2 
+        ? { p1: q1, p2: q2, winner: q1, loser: q2 } 
+        : { p1: q1, p2: q2, winner: q2, loser: q1 };
     }
 
     function startFinale() {
@@ -2595,17 +2599,18 @@ if (state.seasonFormat === "tournament-of-all-stars") {
           let shuffled = [...finalists].sort(() => Math.random() - 0.5);
           let qf1 = makeMatch(shuffled[0], shuffled[1]); let qf2 = makeMatch(shuffled[2], shuffled[3]);
           let qf3 = makeMatch(shuffled[4], shuffled[5]); let qf4 = makeMatch(shuffled[6], shuffled[7]);
-
           let sf1 = makeMatch(qf1.winner, qf2.winner);
           let sf2 = makeMatch(qf3.winner, qf4.winner);
           let final = makeMatch(sf1.winner, sf2.winner);
-
+          
           [qf1, qf2, qf3, qf4].forEach(m => { m.loser.elimOrder = epIndex + 1; m.loser.history[epIndex] = "ELIM"; });
           [sf1, sf2].forEach(m => { m.loser.elimOrder = epIndex + 2; m.loser.history[epIndex] = "ELIM"; });
-          final.loser.elimOrder = epIndex + 3; final.loser.history[epIndex] = "RUNNER UP";
+          final.loser.elimOrder = epIndex + 3;
+          final.loser.history[epIndex] = "RUNNER UP";
           final.winner.elimOrder = 999; final.winner.history[epIndex] = "WINNER";
-
-          state.finaleData = { step: 1, qf1, qf2, qf3, qf4, sf1, sf2, final };
+          
+          // Added "finalists" to this object so the first screen can actually read it!
+          state.finaleData = { step: 1, qf1, qf2, qf3, qf4, sf1, sf2, final, finalists };
           state.episodeNumber++; state.mode = "finale"; renderFinale();
           return;
       }
@@ -2675,7 +2680,8 @@ if (state.seasonFormat === "tournament-of-all-stars") {
                 <div class="section-card flex-col-center">
                   <div class="label-row"><span class="pill">Grand Finale</span></div>
                   <p class="big-message">Lip Sync Extravaganza!</p>
-                  <p class="muted">Welcome to the Grand Finale. These 8 queens will compete in a sudden-death lip sync tournament for the crown!</p>
+                  <p class="muted">Welcome to the Grand Finale! The final 8 queens will now compete in a sudden-death Lip Sync tournament for the crown.</p>
+                  <p class="muted" style="margin-top: 8px; max-width: 500px;"><strong>How it works:</strong> The queens will be split into 4 pairs for Round 1. The winners advance to Round 2. The 4 remaining queens will split into 2 pairs. The winners of those lip syncs will advance to the Final Two, where they will lip sync for the crown!</p>
                   <div class="flex-center" style="margin-top:16px;">
                     ${f.finalists.map(q => `<div class="placement-card bg-safe">${escapeHtml(q.name)}</div>`).join("")}
                   </div>
