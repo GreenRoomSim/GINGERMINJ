@@ -451,6 +451,80 @@
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg);
     } }
 
+    /* Extra Options Modal */
+    .extra-options-btn {
+      background: transparent;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 12px;
+      cursor: pointer;
+      box-shadow: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .extra-options-btn:hover {
+      background: var(--lime-3);
+      border-color: var(--lime);
+      color: var(--ink);
+      transform: none;
+    }
+
+    /* Toggle Switch */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .toggle-row:last-child { border-bottom: none; }
+    .toggle-label-group { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+    .toggle-label-title { font-size: 14px; font-weight: 700; color: var(--ink); }
+    .toggle-label-desc { font-size: 12px; color: var(--muted); line-height: 1.4; }
+    .toggle-switch {
+      position: relative;
+      width: 46px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: #dde8d8;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.2s;
+      border: 1px solid var(--border);
+    }
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 18px;
+      height: 18px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+      transition: transform 0.2s;
+    }
+    .toggle-switch input:checked + .toggle-track {
+      background: linear-gradient(180deg, var(--lime), #76d939);
+      border-color: #76d939;
+    }
+    .toggle-switch input:checked + .toggle-track::after {
+      transform: translateX(20px);
+    }
+
     /* Modal Styles */
     .modal {
       position: fixed;
@@ -856,6 +930,33 @@
       </div>
     </div>
 
+    <!-- Extra Options Modal -->
+    <div id="extraOptionsModal" class="modal hidden">
+      <div class="modal-content panel">
+        <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h2 style="margin:0;">Extra Options</h2>
+            <div class="meta">Optional season toggles — customise your experience.</div>
+          </div>
+          <button id="closeExtraOptionsBtn" class="ghost" style="padding: 6px 12px;">Close</button>
+        </div>
+        <div class="panel-body">
+
+          <div class="toggle-row">
+            <div class="toggle-label-group">
+              <span class="toggle-label-title">Non-Elimination Episodes</span>
+              <span class="toggle-label-desc">Once per season (Usually Mid-Late), The Top 2 queens lip sync for the win instead of anyone going home. This setting only works with the Regular Season Format.</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="nonElimToggle" checked />
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
     <section id="setupView" class="panel">
       <div class="panel-header">
         <h2>Cast Setup</h2>
@@ -919,8 +1020,9 @@
                     <option value="disabled">Disabled</option>
                   </select>
                 </label>
-              </div>
 
+                <button id="openExtraOptionsBtn" class="extra-options-btn">⚙️ Open Extra Options</button>
+              </div>
               <button id="startBtn" class="primary" disabled>Start Season</button>
             </div>
           </div>
@@ -1117,6 +1219,7 @@
       usedMinis: [],
       usedMaxis: [],
       hasMidSeasonNonElim: false,
+      nonElimEnabled: true,
       // TOURNAMENT TRACKERS:
       tournamentPoints: {}, 
       wildcardQueen: null,
@@ -1157,6 +1260,17 @@
     el.openCustomQueenBtn.addEventListener("click", () => el.customQueenModal.classList.remove("hidden"));
     el.closeCustomQueenBtn.addEventListener("click", () => el.customQueenModal.classList.add("hidden"));
     el.closeRigBtn.addEventListener("click", () => el.rigModal.classList.add("hidden"));
+
+    // Extra Options Modal
+    document.getElementById("openExtraOptionsBtn").addEventListener("click", () => {
+      document.getElementById("extraOptionsModal").classList.remove("hidden");
+    });
+    document.getElementById("closeExtraOptionsBtn").addEventListener("click", () => {
+      document.getElementById("extraOptionsModal").classList.add("hidden");
+    });
+    document.getElementById("nonElimToggle").addEventListener("change", (e) => {
+      state.nonElimEnabled = e.target.checked;
+    });
     el.suggestBtn.addEventListener("click", () => {
       window.open("https://forms.gle/bprZzRLGFyfe9yWs6", "_blank");
     });
@@ -1610,7 +1724,7 @@ if (state.seasonFormat === "tournament-of-all-stars") {
       let ggData = null;
 
       let isMidSeasonNonElim = false;
-      if (state.seasonFormat === "regular" && !state.hasMidSeasonNonElim && n <= 7 && n >= 5 && maxi.name !== "Girl Group Challenge" && state.episodeNumber > 1) {
+      if (state.nonElimEnabled && state.seasonFormat === "regular" && !state.hasMidSeasonNonElim && n <= 7 && n >= 5 && maxi.name !== "Girl Group Challenge" && state.episodeNumber > 1) {
           if (Math.random() < 0.33 || n === 5) {
               isMidSeasonNonElim = true;
               state.hasMidSeasonNonElim = true;
@@ -4003,18 +4117,17 @@ if (state.seasonFormat === "tournament-of-all-stars") {
       el.finaleView.classList.toggle("hidden", state.mode !== "finale");
     }
 
-    // Wiring up basic buttons
-    // Toggle the clean overlay when Tournament mode is active
+    // Toggle the clean overlay when Tournament or Lip Sync Assassin mode is active
     el.seasonFormatSelect.addEventListener("change", (e) => {
-      const isTournament = e.target.value === "tournament-of-all-stars";
+      const isLocked = e.target.value === "tournament-of-all-stars" || e.target.value === "all-stars-assassin";
       const overlay = document.getElementById("tournamentOverlay");
       const extraSelects = document.querySelectorAll("#extraSettingsWrapper select");
 
-      if (isTournament) {
+      if (isLocked) {
         overlay.classList.remove("hidden");
         extraSelects.forEach(sel => {
           sel.disabled = true;
-          sel.style.opacity = "0.5"; // Makes the dropdowns look faded behind the glass
+          sel.style.opacity = "0.5";
         });
       } else {
         overlay.classList.add("hidden");
