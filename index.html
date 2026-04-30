@@ -218,6 +218,7 @@
     }
     .bg-elim { background: #883131 !important; color: #ffffff !important; border: none;
     }
+    .bg-dept { background: #e2a9f1 !important; color: #000000 !important; border: none; font-weight: bold; }
     
     /* Tournament of All Stars — expanded placements (use standard base colors) */
     .bg-t_win    { background: #00bfff !important; color: #000000 !important; border: none; font-weight: bold; } /* Top 2 standalone (no outcome yet) */
@@ -666,6 +667,12 @@
   font-weight: 700;
 }
 
+.track-record-table .placement-DEPT {
+  background: #e2a9f1;
+  color: #000;
+  font-weight: 700;
+}
+
 .track-record-table .placement-EMPTY {
   background: #d9d9d9;
   color: #000;
@@ -677,12 +684,125 @@
 .placement-LOW { background-color: #ffb6c1; color: black; }
 .placement-BTM2 { background-color: #f88379; color: black; }
 .placement-ELIM { background-color: #a11f24; color: white; font-weight: bold; }
+.placement-DEPT { background-color: #e2a9f1; color: black; font-weight: bold; }
 .placement-WINNER { background-color: #ffd700; color: black; font-weight: bold; }
 .placement-RUNNER-UP { background-color: #c0c0c0; color: black; font-weight: bold; }
 .placement-GUEST { background-color: #eaecf0; color: black; }
 .placement-EMPTY { background-color: #eaecf0; }
   </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    /* ── DEBUG PANEL ─────────────────────────────── */
+    #debugCodeModal .modal-content,
+    #debugPanelModal .modal-content {
+      max-width: 480px;
+      width: 92%;
+    }
+    #debugPanelModal .modal-content {
+      max-width: 640px;
+      max-height: 88vh;
+    }
+    .debug-header {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      color: #e2a9f1;
+      padding: 16px 20px;
+      border-radius: 20px 20px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .debug-header h2 { margin: 0; font-size: 18px; letter-spacing: 0.05em; }
+    .debug-header .debug-badge {
+      font-size: 10px;
+      background: #e2a9f1;
+      color: #1a1a2e;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+    .debug-body {
+      background: #0f0f1a;
+      color: #d0d0e8;
+      padding: 18px 20px;
+      border-radius: 0 0 20px 20px;
+      overflow-y: auto;
+      max-height: calc(88vh - 60px);
+    }
+    .debug-section-title {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #e2a9f1;
+      margin: 18px 0 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #2a2a4a;
+    }
+    .debug-section-title:first-child { margin-top: 0; }
+    .debug-stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .debug-stat {
+      background: #1a1a2e;
+      border: 1px solid #2a2a4a;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 12px;
+    }
+    .debug-stat .label { color: #7070a0; font-size: 10px; margin-bottom: 2px; }
+    .debug-stat .value { color: #e2a9f1; font-weight: 700; font-size: 14px; }
+    .debug-btn {
+      display: block;
+      width: 100%;
+      margin-top: 8px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid #3a3a5a;
+      background: #1a1a2e;
+      color: #d0d0e8;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
+      box-shadow: none;
+    }
+    .debug-btn:hover { background: #2a2a4e; border-color: #e2a9f1; color: #e2a9f1; transform: none; }
+    .debug-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .debug-btn.accent { background: #2a1a3e; border-color: #e2a9f1; color: #e2a9f1; }
+    .debug-btn.danger-btn { border-color: #ff6b6b; color: #ff9999; }
+    .debug-btn.danger-btn:hover { background: #2e1a1a; border-color: #ff6b6b; color: #ff6b6b; }
+    .debug-note {
+      font-size: 11px;
+      color: #5555a0;
+      margin: 6px 0 0;
+      line-height: 1.5;
+    }
+    #debugCodeModal input[type="password"] {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid #3a3a5a;
+      background: #1a1a2e;
+      color: #e2a9f1;
+      font-size: 16px;
+      font-family: monospace;
+      letter-spacing: 0.15em;
+      outline: none;
+      box-sizing: border-box;
+      margin-top: 12px;
+    }
+    #debugCodeModal input[type="password"]::placeholder { color: #4040a0; letter-spacing: 0.05em; }
+    #debugCodeError {
+      color: #ff6b6b;
+      font-size: 12px;
+      margin-top: 8px;
+      min-height: 16px;
+    }
+  </style>
 </head>
 <body>
   <div class="app">
@@ -692,7 +812,62 @@
           <img src="banner.png" alt="Drag Race Simulator Banner" class="main-logo" />
         </div>
       <h1 class="title">Greenroom Drag Race Simulator</h1>
-      <p class="subtitle">Dev v2.1.0 - Last Updated 28/4/26</p>
+      <p class="subtitle" id="secretTrigger">Dev v2.2.0 - Last Updated 30/4/26</p>
+
+    <!-- Debug Code Entry Modal -->
+    <div id="debugCodeModal" class="modal hidden">
+      <div class="modal-content" style="background:#0f0f1a; border:1px solid #3a3a5a; border-radius:20px; padding:24px;">
+        <div style="color:#e2a9f1; font-size:18px; font-weight:900; letter-spacing:0.05em; margin-bottom:4px;">🔒 Restricted Access</div>
+        <div style="color:#5555a0; font-size:12px; margin-bottom:4px;">Enter the developer access code to continue.</div>
+        <input type="password" id="debugCodeInput" placeholder="enter code..." autocomplete="off" />
+        <div id="debugCodeError"></div>
+        <div style="display:flex; gap:10px; margin-top:14px;">
+          <button id="debugCodeSubmit" style="flex:1; padding:10px; border-radius:12px; border:1px solid #e2a9f1; background:#2a1a3e; color:#e2a9f1; font-weight:800; cursor:pointer; font-size:14px; box-shadow:none;">Unlock</button>
+          <button id="debugCodeCancel" style="flex:1; padding:10px; border-radius:12px; border:1px solid #3a3a5a; background:#1a1a2e; color:#7070a0; font-weight:700; cursor:pointer; font-size:14px; box-shadow:none;">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Debug Panel Modal -->
+    <div id="debugPanelModal" class="modal hidden">
+      <div class="modal-content panel" style="background:#0f0f1a; border:1px solid #3a3a5a;">
+        <div class="debug-header">
+          <h2>🛠 Developer Debug Panel</h2>
+          <span class="debug-badge">INTERNAL</span>
+        </div>
+        <div class="debug-body">
+
+          <div class="debug-section-title">Session State</div>
+          <div class="debug-stat-grid" id="debugStateGrid">
+            <div class="debug-stat"><div class="label">Mode</div><div class="value" id="dbg-mode">—</div></div>
+            <div class="debug-stat"><div class="label">Episode</div><div class="value" id="dbg-ep">—</div></div>
+            <div class="debug-stat"><div class="label">Phase</div><div class="value" id="dbg-phase">—</div></div>
+            <div class="debug-stat"><div class="label">Active Queens</div><div class="value" id="dbg-active">—</div></div>
+            <div class="debug-stat"><div class="label">Format</div><div class="value" id="dbg-format">—</div></div>
+            <div class="debug-stat"><div class="label">Special Episode</div><div class="value" id="dbg-special">—</div></div>
+          </div>
+
+          <div class="debug-section-title">Force Special Placement — Current Episode</div>
+          <p class="debug-note">Forces a placement type onto the current episode. Only works during a Regular Season game. Will re-simulate the episode immediately.</p>
+          <button class="debug-btn accent" id="dbg-forceDEPT">💜 Force DEPT This Episode</button>
+          <button class="debug-btn" id="dbg-forceDEPT-next" style="margin-top:6px;">💜 Force DEPT Next Episode</button>
+          <button class="debug-btn" id="dbg-clearForce" style="margin-top:6px;">✕ Clear Forced Flags</button>
+
+          <div class="debug-section-title">Future Placements (Placeholder)</div>
+          <p class="debug-note">Reserved slots for upcoming special placement types. Not yet implemented.</p>
+          <button class="debug-btn" disabled>🔜 Force [Future Placement A]</button>
+          <button class="debug-btn" disabled style="margin-top:6px;">🔜 Force [Future Placement B]</button>
+
+          <div class="debug-section-title">Episode Tools</div>
+          <button class="debug-btn" id="dbg-rerollEp">🎲 Re-roll Current Episode</button>
+          <button class="debug-btn danger-btn" id="dbg-skipToFinale" style="margin-top:6px;">⚡ Skip to Finale (eliminate queens)</button>
+
+          <div class="debug-section-title">Close</div>
+          <button class="debug-btn" id="closeDebugPanelBtn" style="text-align:center;">Close Panel</button>
+
+        </div>
+      </div>
+    </div>
       
       <div class="button-row" style="margin-top: 16px;">
         <button id="preDefBtn" class="primary" style="padding: 8px 16px; font-size: 14px;">Pre-Defined Casts</button>
@@ -945,10 +1120,32 @@
           <div class="toggle-row">
             <div class="toggle-label-group">
               <span class="toggle-label-title">Non-Elimination Episodes</span>
-              <span class="toggle-label-desc">Once per season (Usually Mid-Late), The Top 2 queens lip sync for the win instead of anyone going home. This setting only works with the Regular Season Format.</span>
+              <span class="toggle-label-desc">Once per season (eps 5–7), the bottom 2 lip sync for the win instead of going home. No one is eliminated.</span>
             </div>
             <label class="toggle-switch">
-              <input type="checkbox" id="nonElimToggle" checked />
+              <input type="checkbox" id="nonElimToggle" />
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-label-group">
+              <span class="toggle-label-title">LaLaPaRuza Smackdown</span>
+              <span class="toggle-label-desc">A mid-season lip sync smackdown (ep 8) where eliminated queens battle to re-enter the competition.</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="lalaPaRuzaToggle" />
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-label-group">
+              <span class="toggle-label-title">Due to Exiting Production (DEPT)</span>
+              <span class="toggle-label-desc">Rarely (1% chance per elimination episode), a queen may be forced to withdraw due to injury. The bottom 2 still lip sync, but no one goes home. Regular Season only.</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="deptToggle" />
               <span class="toggle-track"></span>
             </label>
           </div>
@@ -992,20 +1189,32 @@
               </label>
               
               <div id="extraSettingsWrapper" style="position: relative; display: grid; gap: 10px; margin-top: 4px;">
-                
+
+                <!-- Full overlay: Tournament Of All Stars -->
                 <div id="tournamentOverlay" class="hidden" style="position: absolute; inset: -5px; background: rgba(238, 251, 231, 0.7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 10; display: flex; align-items: center; justify-content: center; border-radius: 12px; border: 2px solid var(--border); pointer-events: none; transition: all 0.3s ease;">
                   <div style="background: var(--card); padding: 8px 16px; border-radius: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; align-items: center; gap: 8px;">
                     <span style="color: var(--muted); font-weight: 600; font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase;">Other Settings Locked For This Format</span>
                   </div>
                 </div>
 
-                <label class="field">Premiere Format
-                  <select id="premiereFormatSelect">
-                    <option value="regular">Regular Premiere</option>
-                    <option value="no-elim">Regular Premiere (No Elimination)</option>
-                    <option value="top2">Top 2 Premiere (Lip Sync for the Win)</option>
-                  </select>
-                </label>
+                <!-- Partial overlay: Lip Sync Assassin (covers premiere + extra options only) -->
+                <div id="assassinLockWrapper" style="position: relative; display: grid; gap: 10px;">
+                  <div id="assassinOverlay" class="hidden" style="position: absolute; inset: -5px; background: rgba(238, 251, 231, 0.7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 10; display: flex; align-items: center; justify-content: center; border-radius: 12px; border: 2px solid var(--border); pointer-events: none; transition: all 0.3s ease;">
+                    <div style="background: var(--card); padding: 8px 16px; border-radius: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; align-items: center; gap: 8px;">
+                      <span style="color: var(--muted); font-weight: 600; font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase;">Some Settings Locked For This Format</span>
+                    </div>
+                  </div>
+
+                  <label class="field">Premiere Format
+                    <select id="premiereFormatSelect">
+                      <option value="regular">Regular Premiere</option>
+                      <option value="no-elim">Regular Premiere (No Elimination)</option>
+                      <option value="top2">Top 2 Premiere (Lip Sync for the Win)</option>
+                    </select>
+                  </label>
+
+                  <button id="openExtraOptionsBtn" class="extra-options-btn">⚙️ Open Extra Options</button>
+                </div>
 
                 <label class="field">Finale Format
                   <select id="finaleFormatSelect">
@@ -1014,14 +1223,6 @@
                   </select>
                 </label>
 
-                <label class="field">LaLaPaRuza Smackdown
-                  <select id="lalaPaRuzaSelect">
-                    <option value="enabled">Enabled (Mid-Season)</option>
-                    <option value="disabled">Disabled</option>
-                  </select>
-                </label>
-
-                <button id="openExtraOptionsBtn" class="extra-options-btn">⚙️ Open Extra Options</button>
               </div>
               <button id="startBtn" class="primary" disabled>Start Season</button>
             </div>
@@ -1210,7 +1411,7 @@
       seasonFormat: "regular",
       finaleFormat: "top4",
       premiereFormat: "regular",
-      lalaPaRuzaEnabled: true,
+      lalaPaRuzaEnabled: false,
       queens: [],
       episodeNumber: 0,
       phase: 0,
@@ -1220,6 +1421,7 @@
       usedMaxis: [],
       hasMidSeasonNonElim: false,
       nonElimEnabled: true,
+      deptEnabled: false,
       // TOURNAMENT TRACKERS:
       tournamentPoints: {}, 
       wildcardQueen: null,
@@ -1270,6 +1472,12 @@
     });
     document.getElementById("nonElimToggle").addEventListener("change", (e) => {
       state.nonElimEnabled = e.target.checked;
+    });
+    document.getElementById("lalaPaRuzaToggle").addEventListener("change", (e) => {
+      state.lalaPaRuzaEnabled = e.target.checked;
+    });
+    document.getElementById("deptToggle").addEventListener("change", (e) => {
+      state.deptEnabled = e.target.checked;
     });
     el.suggestBtn.addEventListener("click", () => {
       window.open("https://forms.gle/bprZzRLGFyfe9yWs6", "_blank");
@@ -1376,6 +1584,7 @@
         if (p === "T_WIN2_ELIM") return "bg-t_win2_elim";
         if (p === "T_WIN_ELIM")  return "bg-t_win_elim";
         if (p === "RTRN")        return "bg-return";
+        if (p === "DEPT")        return "bg-dept";
         return `bg-${p.toLowerCase()}`;
     }
 
@@ -1389,6 +1598,7 @@
         if (p === "T_SAFE_ELIM") return `<span class="compound-placement">SAFE<br>+ ELIM</span>`;
         if (p === "T_WIN2_ELIM") return `<span class="compound-placement">WIN<br>+ ELIM</span>`;
         if (p === "T_WIN_ELIM")  return `<span class="compound-placement">WIN<br>+ ELIM</span>`;
+        if (p === "DEPT")        return "DEPT";
         return p;
     }
 
@@ -1446,7 +1656,8 @@
       state.seasonFormat = el.seasonFormatSelect.value;
       state.finaleFormat = el.finaleFormatSelect.value;
       state.premiereFormat = el.premiereFormatSelect.value;
-      state.lalaPaRuzaEnabled = el.lalaPaRuzaSelect.value === "enabled";
+      state.lalaPaRuzaEnabled = document.getElementById("lalaPaRuzaToggle").checked;
+      state.deptEnabled = document.getElementById("deptToggle").checked;
       
       el.customQueenModal.classList.add("hidden");
       state.queens = state.queens.map((q, i) => ({
@@ -1927,6 +2138,21 @@ if (state.seasonFormat === "tournament-of-all-stars") {
             placements: { winners, highQueens, pureSafe, savedLow, bottomTwo },
             countsApplied: false, lipSync: null, elimination: null, riggedOutcome: null
           };
+      }
+
+      // DEPT Check — Regular season only, not premiere ep, and not a special episode type (those early-return above)
+      if (state.deptEnabled && state.seasonFormat === "regular" && state.episodeNumber > 1) {
+          const ed = state.episodeData;
+          if (ed && !ed.isLaLaPaRuza && !ed.isMidSeasonNonElim) {
+              if (Math.random() < 0.01) {
+                  const btm2Ids = new Set((ed.placements.bottomTwo || []).map(q => q.id));
+                  const deptCandidates = activeQueens().filter(q => !btm2Ids.has(q.id));
+                  if (deptCandidates.length > 0) {
+                      ed.isDept = true;
+                      ed.deptQueen = pick(deptCandidates);
+                  }
+              }
+          }
       }
     }
 
@@ -2879,6 +3105,15 @@ if (state.seasonFormat === "tournament-of-all-stars") {
               `;
           } else if (phaseTag === 6 && !data.isLaLaPaRuza && !isAssassin) {
             if (!data.elimination) {
+              // DEPT: injured queen departs — no one from BTM2 goes home
+              if (data.isDept) {
+                  const dq = data.deptQueen;
+                  dq.record.ELIM += 1;
+                  dq.eliminated = true;
+                  dq.elimOrder = state.episodeNumber;
+                  dq.history[state.episodeNumber - 1] = "DEPT";
+                  data.elimination = { isDept: true, deptQueen: dq };
+              } else {
               let w = data.lipSync.winner.queen;
               let l = data.lipSync.loser.queen;
               let s1 = data.lipSync.s1; let s2 = data.lipSync.s2;
@@ -2942,12 +3177,27 @@ if (state.seasonFormat === "tournament-of-all-stars") {
                   l.eliminated = true; l.elimOrder = state.episodeNumber; l.history[state.episodeNumber - 1] = "ELIM";
                   data.elimination = { survivor: w, eliminated: l };
               }
+              } // end else (non-DEPT)
             }
             
             const e = data.elimination;
             let contentInner = "";
             
-            if (e.legacy) {
+            if (e.isDept) {
+                contentInner = `
+                  <div class="group-row">
+                    <p class="muted">Before we get to the result of tonight's lip sync, I need to address something very important.</p>
+                  </div>
+                  <div class="group-row">
+                    <p class="muted">${escapeHtml(e.deptQueen.name)}, please step forward.</p>
+                    <div class="placement-card bg-dept">${escapeHtml(e.deptQueen.name)}</div>
+                  </div>
+                  <div class="group-row" style="border:none;">
+                    <p class="muted">Due to an injury sustained during this competition, you have been advised to withdraw and seek proper medical care. We are deeply grateful for everything you have brought to this competition, and we wish you a full and speedy recovery.</p>
+                    <p class="muted" style="margin-top: 10px; font-style: italic; color: var(--danger);">As a result, no queen from the bottom 2 will be going home tonight.</p>
+                  </div>
+                `;
+            } else if (e.legacy) {
                 contentInner = `
                   <div class="group-row">
                     <div class="placement-card bg-win">${escapeHtml(e.winner.name)}</div>
@@ -4119,22 +4369,30 @@ if (state.seasonFormat === "tournament-of-all-stars") {
 
     // Toggle the clean overlay when Tournament or Lip Sync Assassin mode is active
     el.seasonFormatSelect.addEventListener("change", (e) => {
-      const isLocked = e.target.value === "tournament-of-all-stars" || e.target.value === "all-stars-assassin";
-      const overlay = document.getElementById("tournamentOverlay");
-      const extraSelects = document.querySelectorAll("#extraSettingsWrapper select");
+      const val = e.target.value;
+      const isTournament = val === "tournament-of-all-stars";
+      const isAssassin = val === "all-stars-assassin";
 
-      if (isLocked) {
-        overlay.classList.remove("hidden");
-        extraSelects.forEach(sel => {
-          sel.disabled = true;
-          sel.style.opacity = "0.5";
-        });
-      } else {
-        overlay.classList.add("hidden");
-        extraSelects.forEach(sel => {
-          sel.disabled = false;
-          sel.style.opacity = "1";
-        });
+      const tournamentOverlay = document.getElementById("tournamentOverlay");
+      const assassinOverlay = document.getElementById("assassinOverlay");
+      const extraSelects = document.querySelectorAll("#extraSettingsWrapper select");
+      const premiereSelect = document.getElementById("premiereFormatSelect");
+      const finaleSelect = document.getElementById("finaleFormatSelect");
+
+      // Full lock for Tournament
+      tournamentOverlay.classList.toggle("hidden", !isTournament);
+      extraSelects.forEach(sel => {
+        sel.disabled = isTournament;
+        sel.style.opacity = isTournament ? "0.5" : "1";
+      });
+
+      // Partial lock for Assassin (premiere only, finale stays free)
+      assassinOverlay.classList.toggle("hidden", !isAssassin);
+      if (!isTournament) {
+        premiereSelect.disabled = isAssassin;
+        premiereSelect.style.opacity = isAssassin ? "0.5" : "1";
+        finaleSelect.disabled = false;
+        finaleSelect.style.opacity = "1";
       }
     });
     el.randomizeQueenBtn.addEventListener("click", randomizeQueenForm);
@@ -4179,6 +4437,211 @@ window.resolveTournamentTie = function(queenId) {
     };
 
     updateSetupUI();
+
+    // ── SECRET DEBUG PANEL ────────────────────────────────────────────────────
+    // Access: click the version text 7 times quickly → code prompt appears
+    // Code: WERKROOM
+    // ─────────────────────────────────────────────────────────────────────────
+    (function() {
+      const DEBUG_CODE = "WERKROOM";
+      const TRIGGER_CLICKS = 7;
+      const TRIGGER_WINDOW_MS = 3000;
+
+      let clickTimes = [];
+      let debugUnlocked = false;
+
+      const secretTrigger = document.getElementById("secretTrigger");
+      const codeModal   = document.getElementById("debugCodeModal");
+      const panelModal  = document.getElementById("debugPanelModal");
+      const codeInput   = document.getElementById("debugCodeInput");
+      const codeError   = document.getElementById("debugCodeError");
+
+      // ── Trigger: 7 rapid clicks on version text ──
+      secretTrigger.addEventListener("click", () => {
+        const now = Date.now();
+        clickTimes.push(now);
+        clickTimes = clickTimes.filter(t => now - t < TRIGGER_WINDOW_MS);
+        if (clickTimes.length >= TRIGGER_CLICKS) {
+          clickTimes = [];
+          if (debugUnlocked) {
+            openDebugPanel();
+          } else {
+            codeModal.classList.remove("hidden");
+            codeInput.value = "";
+            codeError.textContent = "";
+            setTimeout(() => codeInput.focus(), 50);
+          }
+        }
+      });
+
+      // ── Code modal events ──
+      document.getElementById("debugCodeSubmit").addEventListener("click", submitCode);
+      document.getElementById("debugCodeCancel").addEventListener("click", () => {
+        codeModal.classList.add("hidden");
+      });
+      codeInput.addEventListener("keydown", e => {
+        if (e.key === "Enter") submitCode();
+        if (e.key === "Escape") codeModal.classList.add("hidden");
+      });
+
+      function submitCode() {
+        if (codeInput.value.trim().toUpperCase() === DEBUG_CODE) {
+          debugUnlocked = true;
+          codeModal.classList.add("hidden");
+          openDebugPanel();
+        } else {
+          codeError.textContent = "⚠ Incorrect code. Try again.";
+          codeInput.value = "";
+          codeInput.focus();
+        }
+      }
+
+      // ── Open & refresh debug panel ──
+      function openDebugPanel() {
+        refreshDebugState();
+        panelModal.classList.remove("hidden");
+      }
+
+      document.getElementById("closeDebugPanelBtn").addEventListener("click", () => {
+        panelModal.classList.add("hidden");
+      });
+      // Close on backdrop click
+      panelModal.addEventListener("click", e => {
+        if (e.target === panelModal) panelModal.classList.add("hidden");
+      });
+      codeModal.addEventListener("click", e => {
+        if (e.target === codeModal) codeModal.classList.add("hidden");
+      });
+
+      // ── State readout ──
+      function refreshDebugState() {
+        document.getElementById("dbg-mode").textContent    = state.mode;
+        document.getElementById("dbg-ep").textContent      = state.episodeNumber || "—";
+        document.getElementById("dbg-phase").textContent   = state.phase || "—";
+        document.getElementById("dbg-active").textContent  = state.mode === "game" ? activeQueens().length : "—";
+        document.getElementById("dbg-format").textContent  = state.seasonFormat || "—";
+        const ed = state.episodeData;
+        let special = "none";
+        if (ed) {
+          if (ed.isDept) special = "DEPT";
+          else if (ed.isLaLaPaRuza) special = "LaLaPaRuza";
+          else if (ed.isMidSeasonNonElim) special = "NonElim";
+          else if (ed.isGirlGroup) special = "GirlGroup";
+        }
+        document.getElementById("dbg-special").textContent = special;
+      }
+
+      // ── Force DEPT on CURRENT episode ──
+      document.getElementById("dbg-forceDEPT").addEventListener("click", () => {
+        if (state.mode !== "game" || !state.episodeData) {
+          return alert("No active game episode to force. Start a Regular Season first.");
+        }
+        if (state.seasonFormat !== "regular") {
+          return alert("DEPT is only available in Regular Season format.");
+        }
+        const ed = state.episodeData;
+        if (ed.isLaLaPaRuza || ed.isMidSeasonNonElim || ed.isTournamentBracket || ed.isTournamentMerge || ed.isTournamentSemi) {
+          return alert("Cannot force DEPT on this episode type.");
+        }
+        if (state.episodeNumber === 1) {
+          return alert("Cannot force DEPT on the premiere.");
+        }
+        // Reset any already-processed elimination so it re-runs
+        ed.elimination = null;
+        ed.lipSync = null;
+        ed.isDept = true;
+        const btm2Ids = new Set((ed.placements.bottomTwo || []).map(q => q.id));
+        const candidates = activeQueens().filter(q => !btm2Ids.has(q.id));
+        if (!candidates.length) return alert("No eligible queens to assign DEPT to.");
+        ed.deptQueen = pick(candidates);
+        // Rewind phase to before the elimination so it plays through correctly
+        state.phase = Math.min(state.phase, 4);
+        panelModal.classList.add("hidden");
+        refreshDebugState();
+        renderEpisode();
+        alert(`✅ DEPT forced on: ${ed.deptQueen.name}\nPhase rewound to 4 — click Next to proceed through the lip sync.`);
+      });
+
+      // ── Force DEPT on NEXT episode ──
+      document.getElementById("dbg-forceDEPT-next").addEventListener("click", () => {
+        state._forceDeptNextEp = true;
+        refreshDebugState();
+        alert("✅ DEPT will be forced on the next eligible episode.");
+      });
+
+      // ── Clear forced flags ──
+      document.getElementById("dbg-clearForce").addEventListener("click", () => {
+        state._forceDeptNextEp = false;
+        if (state.episodeData) {
+          state.episodeData.isDept = false;
+          state.episodeData.deptQueen = null;
+        }
+        refreshDebugState();
+        alert("Forced flags cleared.");
+      });
+
+      // ── Re-roll current episode ──
+      document.getElementById("dbg-rerollEp").addEventListener("click", () => {
+        if (state.mode !== "game") return alert("No active game episode.");
+        if (!confirm("Re-roll this episode? Any progress this episode will be lost.")) return;
+        state.phase = 1;
+        prepareEpisode();
+        panelModal.classList.add("hidden");
+        renderEpisode();
+        refreshDebugState();
+      });
+
+      // ── Skip to finale ──
+      document.getElementById("dbg-skipToFinale").addEventListener("click", () => {
+        if (state.mode !== "game") return alert("No active game to skip.");
+        const finaleThreshold = state.finaleFormat === "top3" ? 3 : 4;
+        const active = activeQueens();
+        if (active.length <= finaleThreshold) return alert("Already at or below finale threshold.");
+        if (!confirm(`Eliminate queens down to ${finaleThreshold} for the finale? This cannot be undone.`)) return;
+
+        // Sort by track score descending, keep top N, eliminate the rest
+        const sorted = [...active].sort((a, b) => trackScore(b) - trackScore(a));
+        const keep = sorted.slice(0, finaleThreshold);
+        const eliminate = sorted.slice(finaleThreshold);
+        eliminate.forEach(q => {
+          q.eliminated = true;
+          q.elimOrder = state.episodeNumber;
+        });
+
+        panelModal.classList.add("hidden");
+        startFinale();
+      });
+
+      // ── Hook into prepareEpisode to apply _forceDeptNextEp ──
+      const _origPrepare = prepareEpisode;
+      // We patch via a post-prepare hook called from nextPhaseBtn logic
+      // Instead, override the global flag check by monkey-patching state checks in the DEPT block
+      // The cleanest way: watch for the flag after prepareEpisode runs via the nextPhaseBtn listener
+      const nextBtn = document.getElementById("nextPhaseBtn");
+      nextBtn.addEventListener("click", function() {
+        // After prepareEpisode fires (from the existing click handler), apply forced DEPT
+        setTimeout(() => {
+          if (state._forceDeptNextEp && state.mode === "game" && state.episodeData) {
+            const ed = state.episodeData;
+            const eligible = !ed.isLaLaPaRuza && !ed.isMidSeasonNonElim
+                          && !ed.isTournamentBracket && !ed.isTournamentMerge && !ed.isTournamentSemi
+                          && state.seasonFormat === "regular" && state.episodeNumber > 1;
+            if (eligible && !ed.isDept) {
+              const btm2Ids = new Set((ed.placements.bottomTwo || []).map(q => q.id));
+              const candidates = activeQueens().filter(q => !btm2Ids.has(q.id));
+              if (candidates.length > 0) {
+                ed.isDept = true;
+                ed.deptQueen = pick(candidates);
+                state._forceDeptNextEp = false;
+                renderEpisode();
+              }
+            }
+          }
+        }, 0);
+      }, true); // capture phase so it runs after the existing handler
+
+    })();
+
   </script>
 </body>
 </html>
