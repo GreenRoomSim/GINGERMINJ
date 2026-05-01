@@ -867,7 +867,7 @@
           <img src="banner.png" alt="Drag Race Simulator Banner" class="main-logo" />
         </div>
       <h1 class="title">Greenroom Drag Race Simulator</h1>
-      <p class="subtitle" id="secretTrigger">V2.1 (Final) - Last Updated 1/5/26</p>
+      <p class="subtitle" id="secretTrigger">V2.1 - Last Updated 4/5/26</p>
 
     <!-- Debug Code Entry Modal -->
     <div id="debugCodeModal" class="modal hidden">
@@ -1026,7 +1026,7 @@
         </div>
         <div class="panel-body">
           <div class="patch-notes-content">
-            <h3>v2.1 (Final) - Update</h3>
+            <h3>v2.1 (Part 2) - Update</h3>
             <ul>
               <li>Added Returning Format to Extra Options for Regular Seasons.</li>
               <li>Format 1 — Random Return: The simulator picks one eliminated queen to dramatically return to the competition a few episodes before the finale. Shown with the new RTRN (#ff943d) placement on the track record.</li>
@@ -1286,6 +1286,7 @@
         </div>
       </div>
     </div>
+    <section id="setupView" class="panel" style="margin-top:18px;">
       <div class="panel-header">
         <h2>Cast Setup</h2>
         <div class="meta">Select queens from the franchise or create your own.</div>
@@ -1663,8 +1664,8 @@
         const s = q.stats || [];
         state.queens.push({
           name: q.name, image: q.image,
-          comedy: s[0] || intRand(3, 10), design: s[1] || intRand(3, 10), performance: s[2] || intRand(3, 10),
-          acting: s[3] || intRand(3, 10), lip_sync: s[4] || intRand(3, 10)
+          comedy: s[0] ?? intRand(3, 10), design: s[1] ?? intRand(3, 10), performance: s[2] ?? intRand(3, 10),
+          acting: s[3] ?? intRand(3, 10), lip_sync: s[4] ?? intRand(3, 10)
         });
       });
       updateSetupUI();
@@ -1705,8 +1706,8 @@
       const s = (queenData && queenData.stats) ? queenData.stats : [];
       state.queens.push({
         name: name, image: image,
-        comedy: s[0] || intRand(3, 10), design: s[1] || intRand(3, 10), performance: s[2] || intRand(3, 10),
-        acting: s[3] || intRand(3, 10), lip_sync: s[4] || intRand(3, 10)
+        comedy: s[0] ?? intRand(3, 10), design: s[1] ?? intRand(3, 10), performance: s[2] ?? intRand(3, 10),
+        acting: s[3] ?? intRand(3, 10), lip_sync: s[4] ?? intRand(3, 10)
       });
       updateSetupUI();
     }
@@ -1885,6 +1886,7 @@
         if (c.req === "late" && !isLate) return false;
         if (c.req === "last" && !isLast) return false;
         if (c.req === "not-last" && isLast) return false;
+        if (c.req === "not-early" && isEarly) return false;
         return true;
       });
       if (!valid.length) valid = pool.filter(c => c.req === "mid" || c.req === "late" || c.req === "not-last");
