@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap" rel="stylesheet">
   <title>Drag Race Simulator</title>
   <style>
     :root {
@@ -222,7 +224,7 @@
     .bg-disq { background: #484848 !important; color: #ffffff !important; border: none; font-weight: bold; }
     .bg-quit { background: #ff66a2 !important; color: #000000 !important; border: none; font-weight: bold; }
     .bg-miss-con { background: #00ffff !important; color: #000000 !important; border: none; font-weight: bold; }
-    .bg-guest { background: #dcdcdc !important; color: #000000 !important; border: none; }
+    .bg-guest { background: #f1f1f1 !important; color: #000000 !important; border: none; }
     
     /* Tournament of All Stars — expanded placements (use standard base colors) */
     .bg-t_win    { background: #00bfff !important; color: #000000 !important; border: none; font-weight: bold; } /* Top 2 standalone (no outcome yet) */
@@ -712,28 +714,28 @@
     /* ── DEBUG PANEL ─────────────────────────────── */
     #debugCodeModal .modal-content,
     #debugPanelModal .modal-content {
-      max-width: 480px;
+      max-width: 400px;
       width: 92%;
     }
     #debugPanelModal .modal-content {
-      max-width: 640px;
+      max-width: 480px;
       max-height: 88vh;
     }
     .debug-header {
       background: linear-gradient(135deg, #0d2b1a, #0a2015);
       color: #6ee89a;
-      padding: 16px 20px;
-      border-radius: 20px 20px 0 0;
+      padding: 10px 14px;
+      border-radius: 16px 16px 0 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .debug-header h2 { margin: 0; font-size: 18px; letter-spacing: 0.05em; }
+    .debug-header h2 { margin: 0; font-size: 14px; letter-spacing: 0.05em; }
     .debug-header .debug-badge {
-      font-size: 10px;
+      font-size: 9px;
       background: #6ee89a;
       color: #0a2015;
-      padding: 3px 8px;
+      padding: 2px 6px;
       border-radius: 999px;
       font-weight: 800;
       letter-spacing: 0.08em;
@@ -741,84 +743,112 @@
     .debug-body {
       background: #0c1f13;
       color: #b8d8c0;
-      padding: 18px 20px;
-      border-radius: 0 0 20px 20px;
+      padding: 12px 14px;
+      border-radius: 0 0 16px 16px;
       overflow-y: auto;
-      max-height: calc(88vh - 60px);
+      max-height: calc(88vh - 46px);
     }
     .debug-section-title {
-      font-size: 11px;
+      font-size: 9px;
       font-weight: 800;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: #6ee89a;
-      margin: 18px 0 10px;
-      padding-bottom: 6px;
+      margin: 12px 0 6px;
+      padding-bottom: 4px;
       border-bottom: 1px solid #1e3d28;
     }
     .debug-section-title:first-child { margin-top: 0; }
     .debug-stat-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 5px;
       margin-bottom: 4px;
     }
     .debug-stat {
       background: #112b1a;
       border: 1px solid #1e3d28;
-      border-radius: 10px;
-      padding: 8px 10px;
-      font-size: 12px;
+      border-radius: 8px;
+      padding: 5px 7px;
+      font-size: 11px;
     }
-    .debug-stat .label { color: #3d6b4a; font-size: 10px; margin-bottom: 2px; }
-    .debug-stat .value { color: #6ee89a; font-weight: 700; font-size: 14px; }
+    .debug-stat .label { color: #3d6b4a; font-size: 9px; margin-bottom: 1px; }
+    .debug-stat .value { color: #6ee89a; font-weight: 700; font-size: 12px; }
     .debug-btn {
-      display: block;
-      width: 100%;
-      margin-top: 8px;
-      padding: 10px 14px;
-      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0;
+      padding: 7px;
+      border-radius: 9px;
       border: 1px solid #254d32;
       background: #112b1a;
       color: #b8d8c0;
-      font-size: 13px;
+      font-size: 11px;
+      font-weight: 900;
+      font-family: 'Nunito', 'Varela Round', 'Trebuchet MS', system-ui, sans-serif;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: all 0.15s;
+      box-shadow: none;
+      width: 100%;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+    .debug-btn:hover { background: #1a3d25; border-color: #6ee89a; transform: none; }
+    .debug-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .debug-btn.accent { background: #0d2b1a; border-color: #6ee89a; }
+    .debug-btn.danger-btn { border-color: #ff6b6b; color: #ff9999; }
+    .debug-btn.danger-btn:hover { background: #2e1a1a; border-color: #ff6b6b; }
+    .debug-note { display: none; }
+    .dbg-col { display: flex; flex-direction: column; gap: 4px; }
+    .dbg-lbl {
+      display: block;
+      font-size: 8px;
+      font-weight: 700;
+      color: #3d6b4a;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      text-align: center;
+      margin-bottom: 1px;
+    }
+    .dbg-close-btn {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 7px;
+      border-radius: 9px;
+      border: 1px solid #254d32;
+      background: #112b1a;
+      color: #3d6b4a;
+      font-size: 11px;
       font-weight: 700;
       cursor: pointer;
-      text-align: left;
+      text-align: center;
       transition: all 0.15s;
       box-shadow: none;
     }
-    .debug-btn:hover { background: #1a3d25; border-color: #6ee89a; color: #6ee89a; transform: none; }
-    .debug-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-    .debug-btn.accent { background: #0d2b1a; border-color: #6ee89a; color: #6ee89a; }
-    .debug-btn.danger-btn { border-color: #ff6b6b; color: #ff9999; }
-    .debug-btn.danger-btn:hover { background: #2e1a1a; border-color: #ff6b6b; color: #ff6b6b; }
-    .debug-note {
-      font-size: 11px;
-      color: #2d5238;
-      margin: 6px 0 0;
-      line-height: 1.5;
-    }
+    .dbg-close-btn:hover { background: #1a3d25; color: #b8d8c0; transform: none; }
     #debugCodeModal input[type="password"] {
       width: 100%;
-      padding: 12px 14px;
-      border-radius: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
       border: 1px solid #254d32;
       background: #112b1a;
       color: #6ee89a;
-      font-size: 16px;
+      font-size: 15px;
       font-family: monospace;
       letter-spacing: 0.15em;
       outline: none;
       box-sizing: border-box;
-      margin-top: 12px;
+      margin-top: 10px;
     }
     #debugCodeModal input[type="password"]::placeholder { color: #2d5238; letter-spacing: 0.05em; }
     #debugCodeError {
       color: #ff6b6b;
-      font-size: 12px;
-      margin-top: 8px;
-      min-height: 16px;
+      font-size: 11px;
+      margin-top: 6px;
+      min-height: 14px;
     }
   </style>
 </head>
@@ -855,48 +885,51 @@
         </div>
         <div class="debug-body">
 
-          <div class="debug-section-title">Session State</div>
-          <div class="debug-stat-grid" id="debugStateGrid">
+          <!-- State stats -->
+          <div class="debug-stat-grid" id="debugStateGrid" style="margin-bottom:10px;">
             <div class="debug-stat"><div class="label">Mode</div><div class="value" id="dbg-mode">—</div></div>
             <div class="debug-stat"><div class="label">Episode</div><div class="value" id="dbg-ep">—</div></div>
             <div class="debug-stat"><div class="label">Phase</div><div class="value" id="dbg-phase">—</div></div>
-            <div class="debug-stat"><div class="label">Active Queens</div><div class="value" id="dbg-active">—</div></div>
+            <div class="debug-stat"><div class="label">Queens</div><div class="value" id="dbg-active">—</div></div>
             <div class="debug-stat"><div class="label">Format</div><div class="value" id="dbg-format">—</div></div>
-            <div class="debug-stat"><div class="label">Special Episode</div><div class="value" id="dbg-special">—</div></div>
+            <div class="debug-stat"><div class="label">Special Ep</div><div class="value" id="dbg-special">—</div></div>
           </div>
 
-          <div class="debug-section-title">Force Special Placement — Current Episode</div>
-          <p class="debug-note">Forces a placement type onto the current episode. Only works during a Regular Season game. Will re-simulate the episode immediately.</p>
-          <button class="debug-btn accent" id="dbg-forceDEPT">💜 Force DEPT This Episode</button>
-          <button class="debug-btn" id="dbg-forceDEPT-next" style="margin-top:6px;">💜 Force DEPT Next Episode</button>
-          <button class="debug-btn" id="dbg-clearForce" style="margin-top:6px;">✕ Clear Forced Flags</button>
+          <!-- Compact action grid -->
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;align-items:start;">
 
-          <div class="debug-section-title">DISQ — Disqualification</div>
-          <p class="debug-note">Forces a disqualification onto the current or next eligible episode. Regular Season elimination episodes only — not premiere, LaLaPaRuza, Non-Elim, or Finale.</p>
-          <div class="debug-stat" style="margin-bottom:8px;">
-            <div class="label">DISQ Status</div>
-            <div class="value" id="dbg-disq-status">—</div>
+            <!-- DEPT -->
+            <div class="dbg-col">
+              <div class="debug-section-title" style="margin:0 0 5px;">DEPT</div>
+              <div><span class="dbg-lbl">This Ep</span><button class="debug-btn accent" id="dbg-forceDEPT">Force DEPT</button></div>
+              <div><span class="dbg-lbl">Next Ep</span><button class="debug-btn" id="dbg-forceDEPT-next">Next DEPT</button></div>
+              <div><span class="dbg-lbl">Clear All</span><button class="debug-btn" id="dbg-clearForce">✕</button></div>
+            </div>
+
+            <!-- DISQ -->
+            <div class="dbg-col">
+              <div class="debug-section-title" style="margin:0 0 5px;">DISQ</div>
+              <div><span class="dbg-lbl">This Ep</span><button class="debug-btn accent" id="dbg-forceDISQ">Force DISQ</button></div>
+              <div><span class="dbg-lbl">Next Ep</span><button class="debug-btn" id="dbg-forceDISQ-next">Next DISQ</button></div>
+            </div>
+
+            <!-- QUIT -->
+            <div class="dbg-col">
+              <div class="debug-section-title" style="margin:0 0 5px;">QUIT</div>
+              <div><span class="dbg-lbl">This Ep</span><button class="debug-btn" style="border-color:#ff66a2;color:#ffaad0;" id="dbg-forceQUIT">Force QUIT</button></div>
+              <div><span class="dbg-lbl">Next Ep</span><button class="debug-btn" id="dbg-forceQUIT-next">Next QUIT</button></div>
+            </div>
+
+            <!-- Tools -->
+            <div class="dbg-col">
+              <div class="debug-section-title" style="margin:0 0 5px;">TOOLS</div>
+              <div><span class="dbg-lbl">Re-roll</span><button class="debug-btn" id="dbg-rerollEp">🎲</button></div>
+              <div><span class="dbg-lbl">SKIP TO FINALE</span><button class="debug-btn danger-btn" id="dbg-skipToFinale">➡️</button></div>
+            </div>
+
           </div>
-          <button class="debug-btn accent" id="dbg-forceDISQ">⬛ Force DISQ This Episode</button>
-          <button class="debug-btn" id="dbg-forceDISQ-next" style="margin-top:6px;">⬛ Force DISQ Next Episode</button>
-          <button class="debug-btn" id="dbg-toggleDisq" style="margin-top:6px;">🔁 Toggle DISQ On/Off</button>
 
-          <div class="debug-section-title">QUIT — Queen Quits</div>
-          <p class="debug-note">Forces a queen to quit on the current or next eligible episode. Converts episode to Top 2 lip sync for the win. Regular Season elimination episodes only — not premiere, LaLaPaRuza, Non-Elim, or Finale. Only once per season.</p>
-          <div class="debug-stat" style="margin-bottom:8px;">
-            <div class="label">QUIT Status</div>
-            <div class="value" id="dbg-quit-status">—</div>
-          </div>
-          <button class="debug-btn" style="border-color:#ff66a2; color:#ffaad0;" id="dbg-forceQUIT">💗 Force QUIT This Episode</button>
-          <button class="debug-btn" id="dbg-forceQUIT-next" style="margin-top:6px;">💗 Force QUIT Next Episode</button>
-          <button class="debug-btn" id="dbg-toggleQuit" style="margin-top:6px;">🔁 Toggle QUIT On/Off</button>
-
-          <div class="debug-section-title">Episode Tools</div>
-          <button class="debug-btn" id="dbg-rerollEp">🎲 Re-roll Current Episode</button>
-          <button class="debug-btn danger-btn" id="dbg-skipToFinale" style="margin-top:6px;">⚡ Skip to Finale (eliminate queens)</button>
-
-          <div class="debug-section-title">Close</div>
-          <button class="debug-btn" id="closeDebugPanelBtn" style="text-align:center;">Close Panel</button>
+          <button class="dbg-close-btn" id="closeDebugPanelBtn">✕ close</button>
 
         </div>
       </div>
@@ -2006,7 +2039,7 @@ if (state.seasonFormat === "tournament-of-all-stars") {
       const mini = getMiniChallenge(state.episodeNumber, n);
       if (!mini.none) {
         mini.winners = [pick(actives)];
-        if (n > 5 && Math.random() < 0.3) mini.winners.push(pick(actives.filter(q => q.id !== mini.winners[0].id)));
+        if (n > 5 && Math.random() < 0.5) mini.winners.push(pick(actives.filter(q => q.id !== mini.winners[0].id)));
       }
 
       const maxi = getMaxiChallenge(state.episodeNumber, n);
@@ -4820,10 +4853,7 @@ window.resolveTournamentTie = function(queenId) {
     // ─────────────────────────────────────────────────────────────────────────
     (function() {
       const DEBUG_CODE = "WERKROOM";
-      const TRIGGER_CLICKS = 7;
-      const TRIGGER_WINDOW_MS = 3000;
 
-      let clickTimes = [];
       let debugUnlocked = false;
 
       const secretTrigger = document.getElementById("secretTrigger");
@@ -4832,13 +4862,15 @@ window.resolveTournamentTie = function(queenId) {
       const codeInput   = document.getElementById("debugCodeInput");
       const codeError   = document.getElementById("debugCodeError");
 
-      // ── Trigger: 7 rapid clicks on version text ──
-      secretTrigger.addEventListener("click", () => {
-        const now = Date.now();
-        clickTimes.push(now);
-        clickTimes = clickTimes.filter(t => now - t < TRIGGER_WINDOW_MS);
-        if (clickTimes.length >= TRIGGER_CLICKS) {
-          clickTimes = [];
+      // ── Trigger: long press (800ms) on version text ──
+      secretTrigger.style.userSelect = "none";
+      secretTrigger.style.webkitUserSelect = "none";
+      secretTrigger.style.cursor = "default";
+      let _lpTimer = null;
+      function _lpStart(e) {
+        e.preventDefault();
+        _lpTimer = setTimeout(() => {
+          _lpTimer = null;
           if (debugUnlocked) {
             openDebugPanel();
           } else {
@@ -4847,8 +4879,16 @@ window.resolveTournamentTie = function(queenId) {
             codeError.textContent = "";
             setTimeout(() => codeInput.focus(), 50);
           }
-        }
-      });
+        }, 800);
+      }
+      function _lpCancel() { clearTimeout(_lpTimer); _lpTimer = null; }
+      secretTrigger.addEventListener("mousedown", _lpStart);
+      secretTrigger.addEventListener("touchstart", _lpStart, { passive: false });
+      secretTrigger.addEventListener("mouseup", _lpCancel);
+      secretTrigger.addEventListener("mouseleave", _lpCancel);
+      secretTrigger.addEventListener("touchend", _lpCancel);
+      secretTrigger.addEventListener("touchcancel", _lpCancel);
+      secretTrigger.addEventListener("contextmenu", e => e.preventDefault());
 
       // ── Code modal events ──
       document.getElementById("debugCodeSubmit").addEventListener("click", submitCode);
@@ -4970,15 +5010,6 @@ window.resolveTournamentTie = function(queenId) {
         alert("Forced flags cleared.");
       });
 
-      // ── Toggle DISQ on/off ──
-      document.getElementById("dbg-toggleDisq").addEventListener("click", () => {
-        state.disqEnabled = !state.disqEnabled;
-        const toggle = document.getElementById("disqToggle");
-        if (toggle) toggle.checked = state.disqEnabled;
-        refreshDebugState();
-        alert(`DISQ is now ${state.disqEnabled ? "ENABLED" : "DISABLED"}.`);
-      });
-
       // ── Force DISQ on CURRENT episode ──
       document.getElementById("dbg-forceDISQ").addEventListener("click", () => {
         if (state.mode !== "game" || !state.episodeData) {
@@ -5018,15 +5049,6 @@ window.resolveTournamentTie = function(queenId) {
         state._forceDisqNextEp = true;
         refreshDebugState();
         alert("✅ DISQ will be forced on the next eligible episode.");
-      });
-
-      // ── Toggle QUIT on/off ──
-      document.getElementById("dbg-toggleQuit").addEventListener("click", () => {
-        state.quitEnabled = !state.quitEnabled;
-        const toggle = document.getElementById("quitToggle");
-        if (toggle) toggle.checked = state.quitEnabled;
-        refreshDebugState();
-        alert(`QUIT is now ${state.quitEnabled ? "ENABLED" : "DISABLED"}.`);
       });
 
       // ── Force QUIT on CURRENT episode ──
