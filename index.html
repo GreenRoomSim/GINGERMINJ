@@ -1784,7 +1784,7 @@
         record: { WIN: 0, TOP2: 0, HIGH: 0, SAFE: 0, LOW: 0, BTM2: 0, ELIM: 0 },
         history: [], eliminated: false, elimOrder: 999
       }));
-      state.episodeNumber = 1; state.phase = 1; state.mode = "game"; state.usedMinis = []; state.usedMaxis = []; state.hasMidSeasonNonElim = false;
+      state.episodeNumber = 1; state.phase = 1; state.mode = "game"; state.usedMinis = []; state.usedMaxis = []; state.hasMidSeasonNonElim = false; state.episodeLog = [];
       state.hasQuit = false; state.hasDept = false; state.hasDisq = false;
       state.tournamentPoints = {};
       state.queens.forEach(q => state.tournamentPoints[q.id] = 0);
@@ -3595,7 +3595,7 @@ if (state.seasonFormat === "tournament-of-all-stars") {
                     <thead>
                       <tr>
                         <th rowspan="3" class="queen-col">Queen</th>
-                        ${Array.from({length: state.episodeNumber}, (_, i) => `<th class="${epColClass(i)}">Ep ${i+1}</th>`).join("")}
+                        ${Array.from({length: state.episodeNumber}, (_, i) => `<th class="${epColClass(i)}">EP. ${i+1}</th>`).join("")}
                         <th rowspan="3" class="score-col">Score</th>
                       </tr>
                       <tr>
