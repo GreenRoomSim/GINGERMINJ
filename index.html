@@ -901,6 +901,24 @@
     }
     body { padding-bottom: env(safe-area-inset-bottom); }
 
+
+    /* Standings scroll wrapper — mobile-friendly horizontal scroll */
+    .standings-scroll-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      width: 100%;
+      scrollbar-width: thin;
+      scrollbar-color: var(--lime) var(--lime-3);
+      padding-bottom: 6px;
+      border-radius: 0 0 8px 8px;
+    }
+    .standings-scroll-wrap::-webkit-scrollbar { height: 7px; }
+    .standings-scroll-wrap::-webkit-scrollbar-track { background: var(--lime-3); border-radius: 99px; }
+    .standings-scroll-wrap::-webkit-scrollbar-thumb { background: var(--lime); border-radius: 99px; }
+    /* Prevent the outer panel from clipping the scrollbar */
+    .panel { overflow: visible; }
+    .panel-body { overflow: visible; }
+
     /* MOBILE <= 640px */
     @media (max-width: 640px) {
       .app { padding: 10px 10px 24px; }
@@ -963,6 +981,8 @@
       #finaleFooter { margin: 12px -10px -10px; padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); }
     }
   </style>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
 
   <script>
     // Inject PWA web manifest dynamically
@@ -1533,6 +1553,22 @@
   </div>
 
   <script>
+
+    // ── Shared Track Record PNG download ──
+    function downloadTrackRecordPng(elementId, filename) {
+      var target = document.getElementById(elementId);
+      if (!target) return alert("Track record not found.");
+      if (typeof html2canvas === "undefined") return alert("Image library not loaded. Please check your internet connection.");
+      html2canvas(target, { useCORS: true, allowTaint: false, scale: 2, backgroundColor: "#ffffff" })
+        .then(function(canvas) {
+          var link = document.createElement("a");
+          link.download = filename || "drag_race_track_record.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        })
+        .catch(function() { alert("Could not generate image — this may be due to browser security restrictions on external images."); });
+    }
+
     const MIN_CAST = 8;
     const MAX_CAST = 16;
     
@@ -4013,12 +4049,13 @@ if (state.seasonFormat === "tournament-of-all-stars") {
               };
             }
             content = `
-              <div class="section-card" style="text-align: left; padding: 24px;">
-                <div style="display:flex; gap: 8px; margin-bottom: 16px;">
+              <div class="section-card" id="midSeasonTrackRecord" style="text-align: left; padding: 24px;">
+                <div style="display:flex; gap: 8px; align-items:center; flex-wrap:wrap; margin-bottom: 16px;">
                   <span class="pill">Track Record</span>
+                  <button onclick="downloadTrackRecordPng('midSeasonTrackRecord','track_record_ep_${state.episodeNumber}.png')" class="secondary" style="margin-left:auto;padding:6px 12px;font-size:13px;min-height:unset;border-radius:10px;box-shadow:none;">📷 Download PNG</button>
                 </div>
                 <h2 style="font-size: 24px; font-weight: 900; margin: 0 0 16px;">Season standings</h2>
-                <div style="overflow-x: auto;">
+                <div class="standings-scroll-wrap">
                   <table class="standings-table">
                     <thead>
                       <tr>
@@ -4408,9 +4445,9 @@ if (state.seasonFormat === "tournament-of-all-stars") {
               });
               content = `
                 <div class="section-card" id="finaleTrackRecord" style="text-align:left; padding:24px; background:white;">
-                  <div style="display:flex; gap:8px; margin-bottom:16px;"><span class="pill">Final Track Record</span></div>
+                  <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:16px;"><span class="pill">Final Track Record</span><button id="downloadPngBtn" class="secondary" style="margin-left:auto;padding:6px 12px;font-size:13px;min-height:unset;border-radius:10px;box-shadow:none;">📷 Download PNG</button></div>
                   <h2 style="font-size:24px; font-weight:900; margin:0 0 16px; text-align:center;">Final Season Standings</h2>
-                  <div style="overflow-x:auto;">
+                  <div class="standings-scroll-wrap">
                     <table class="standings-table">
                       <thead>
                         <tr>
@@ -4437,19 +4474,12 @@ if (state.seasonFormat === "tournament-of-all-stars") {
                     </table>
                   </div>
                 </div>
-                <div class="button-row" style="justify-content:center; margin-top:16px;">
-                  <button id="downloadPngBtn" class="secondary">Download Track Record as PNG</button>
-                </div>
+  
               `;
               setTimeout(() => {
                   const btn = document.getElementById("downloadPngBtn");
                   if (btn) btn.addEventListener("click", () => {
-                      html2canvas(document.getElementById("finaleTrackRecord")).then(canvas => {
-                          const link = document.createElement("a");
-                          link.download = "drag_race_track_record.png";
-                          link.href = canvas.toDataURL("image/png");
-                          link.click();
-                      });
+                      downloadTrackRecordPng("finaleTrackRecord", "final_track_record.png");
                   });
               }, 100);
               el.finaleBtn.textContent = "End Season";
@@ -4594,11 +4624,12 @@ if (state.seasonFormat === "tournament-of-all-stars") {
             else state.episodeLog[_finIdx7].type = "finale";
             content = `
               <div class="section-card" id="finaleTrackRecord" style="text-align: left; padding: 24px; background: white;">
-                <div style="display:flex; gap: 8px; margin-bottom: 16px;">
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:16px;">
                   <span class="pill">Final Track Record</span>
+                  <button id="downloadPngBtn" class="secondary" style="margin-left:auto;padding:6px 12px;font-size:13px;min-height:unset;border-radius:10px;box-shadow:none;">📷 Download PNG</button>
                 </div>
                 <h2 style="font-size: 24px; font-weight: 900; margin: 0 0 16px; text-align: center;">Final Season Standings</h2>
-                <div style="overflow-x: auto;">
+                <div class="standings-scroll-wrap">
                   <table class="standings-table">
                     <thead>
                       <tr>
@@ -4635,19 +4666,12 @@ if (state.seasonFormat === "tournament-of-all-stars") {
                   </table>
                 </div>
               </div>
-              <div class="button-row" style="justify-content: center; margin-top: 16px;">
-                 <button id="downloadPngBtn" class="secondary">Download Track Record as PNG</button>
-              </div>
+
             `;
             setTimeout(() => {
                  const btn = document.getElementById("downloadPngBtn");
                  if(btn) btn.addEventListener("click", () => {
-                     html2canvas(document.getElementById("finaleTrackRecord")).then(canvas => {
-                         const link = document.createElement("a");
-                         link.download = "drag_race_track_record.png";
-                         link.href = canvas.toDataURL("image/png");
-                         link.click();
-                     });
+                     downloadTrackRecordPng("finaleTrackRecord", "final_track_record.png");
                  });
             }, 100);
             el.finaleBtn.textContent = "End Season";
@@ -4766,9 +4790,9 @@ if (state.seasonFormat === "tournament-of-all-stars") {
               else state.episodeLog[_finIdx5].type = "finale";
               content = `
                 <div class="section-card" id="finaleTrackRecord" style="text-align: left; padding: 24px; background: white;">
-                  <div style="display:flex; gap: 8px; margin-bottom: 16px;"><span class="pill">Final Track Record</span></div>
+                  <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:16px;"><span class="pill">Final Track Record</span><button id="downloadPngBtn" class="secondary" style="margin-left:auto;padding:6px 12px;font-size:13px;min-height:unset;border-radius:10px;box-shadow:none;">📷 Download PNG</button></div>
                   <h2 style="font-size: 24px; font-weight: 900; margin: 0 0 16px; text-align: center;">Final Season Standings</h2>
-                  <div style="overflow-x: auto;">
+                  <div class="standings-scroll-wrap">
                     <table class="standings-table">
                       <thead>
                         <tr>
@@ -4805,19 +4829,12 @@ if (state.seasonFormat === "tournament-of-all-stars") {
                     </table>
                   </div>
                 </div>
-                <div class="button-row" style="justify-content: center; margin-top: 16px;">
-                   <button id="downloadPngBtn" class="secondary">Download Track Record as PNG</button>
-                </div>
+
               `;
               setTimeout(() => {
                    const btn = document.getElementById("downloadPngBtn");
                    if(btn) btn.addEventListener("click", () => {
-                       html2canvas(document.getElementById("finaleTrackRecord")).then(canvas => {
-                           const link = document.createElement("a");
-                           link.download = "drag_race_track_record.png";
-                           link.href = canvas.toDataURL("image/png");
-                           link.click();
-                       });
+                       downloadTrackRecordPng("finaleTrackRecord", "final_track_record.png");
                    });
               }, 100);
               el.finaleBtn.textContent = "End Season";
