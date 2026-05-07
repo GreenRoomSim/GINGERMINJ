@@ -5564,21 +5564,33 @@ window.resolveTournamentTie = function(queenId) {
       }, true); // capture phase so it runs after the existing handler
 
     // ── SESSION SAVE / RESTORE ──────────────────────────────────────────
-    // Saves state to sessionStorage before going to patchnotes.html so
-    // the player's season survives the round-trip and is restored on return.
+    // Uses localStorage (not sessionStorage — unreliable on iOS Safari).
+    // Saves on both link-click AND pagehide so mobile navigation is covered.
+    // State is stamped with a timestamp and discarded if older than 2 hours.
 
-    const SAVE_KEY = "drSimState";
+    const SAVE_KEY   = "drSimState";
+    const SAVE_TTL   = 2 * 60 * 60 * 1000; // 2 hours in ms
 
     function saveSession() {
-      try { sessionStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch(e) {}
+      if (state.mode === "setup") return; // nothing worth saving on setup screen
+      try {
+        const payload = Object.assign({}, state, { _savedAt: Date.now() });
+        localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
+      } catch(e) {}
     }
 
     function restoreSession() {
       try {
-        const raw = sessionStorage.getItem(SAVE_KEY);
+        const raw = localStorage.getItem(SAVE_KEY);
         if (!raw) return;
-        sessionStorage.removeItem(SAVE_KEY); // consume once
         const saved = JSON.parse(raw);
+        // Discard stale saves
+        if (!saved._savedAt || (Date.now() - saved._savedAt) > SAVE_TTL) {
+          localStorage.removeItem(SAVE_KEY);
+          return;
+        }
+        localStorage.removeItem(SAVE_KEY); // consume — restore only once
+        delete saved._savedAt;
         Object.assign(state, saved);
         if (state.mode === "game" && state.episodeData) {
           renderAll();
@@ -5589,9 +5601,14 @@ window.resolveTournamentTie = function(queenId) {
       } catch(e) {}
     }
 
+    // Save when clicking the patch notes link
     const patchLink = document.querySelector('a[href="patchnotes.html"]');
     if (patchLink) patchLink.addEventListener("click", saveSession);
 
+    // pagehide fires reliably on iOS/Android when navigating away
+    window.addEventListener("pagehide", saveSession);
+
+    // Restore on load
     restoreSession();
 
     })();
