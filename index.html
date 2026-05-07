@@ -549,10 +549,7 @@
       width: 90%; max-width: 600px;
       max-height: 80vh; overflow-y: auto;
     }
-    .patch-notes-content h3 { margin-top: 0; color: var(--ink);
-    }
-    .patch-notes-content ul { padding-left: 20px; color: var(--muted);
-      line-height: 1.6;}
+
 /* --- TRACK RECORD TABLE (wiki-style) --- */
 .track-record-wrap {
   overflow-x: auto;
@@ -1009,7 +1006,7 @@
     <div class="hero">
       <header class="header">
         <div class="logo-wrapper">
-          <img src="2.1banner.png" alt="Drag Race Simulator Banner" class="main-logo" />
+          <img src="banner.png" alt="Drag Race Simulator Banner" class="main-logo" />
         </div>
       <h1 class="title">Greenroom Drag Race Simulator</h1>
       <p class="subtitle" id="secretTrigger">V2.1 - Last Updated 7/5/26</p>
@@ -1089,7 +1086,7 @@
       
       <div class="button-row" style="margin-top: 16px;">
         <button id="preDefBtn" class="primary" style="padding: 8px 16px; font-size: 14px;">Pre-Defined Casts</button>
-        <button id="patchNotesBtn" class="secondary" style="padding: 8px 16px; font-size: 14px;">View Patch Notes</button>
+        <a href="patchnotes.html" class="secondary" style="padding: 8px 16px; font-size: 14px; text-decoration: none; border-radius: 16px; font-weight: 700; font-size: 15px; display: inline-flex; align-items: center; justify-content: center;">View Patch Notes</a>
         <button id="suggestBtn" class="secondary" style="padding: 8px 16px; font-size: 14px;">Suggest a Feature / Report Bug</button>
       </div>
     </div>
@@ -1163,135 +1160,6 @@
       </div>
     </div>
 
-    <div id="patchNotesModal" class="modal hidden">
-      <div class="modal-content panel">
-        <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center;">
-          <h2>Patch Notes</h2>
-          <button id="closePatchNotesBtn" class="ghost" style="padding: 6px 12px;">Close</button>
-        </div>
-        <div class="panel-body">
-          <div class="patch-notes-content">
-            <h3>v2.1 (Part 2) - Update</h3>
-            <ul>
-              <li>Added Returning Format to Extra Options for Regular Seasons.</li>
-            </ul>
-
-            <h3>v2.1 (Part 1)- Update</h3>
-            <ul>
-              <li>Remodeled the Track Record Table with new features and pictures.</li>
-              <li>Added new placements for season realism such as DEPT, QUIT, and DISQ</li>
-              <li>Added Miss Congeniality to Regular seasons, along with Guests at the finale</li>
-              <li>Made mini challenges less frequent</li>
-              <li>Added a hidden "Debug Panel" for developers to test and force certain outcomes.</li>
-              <li>Moved & Added some toggles into the new "Extra Options" section in setup.</li>
-            </ul>
-
-            <h3>v2.0.1 - Mini Update</h3>
-            <ul>
-              <li>Updated all cast photos to close ups.</li>
-              <li>Added all UK cast photos.</li>
-            </ul>            
-            
-            <h3>v2.0 - Update</h3>
-            <ul>
-              <li>Added Lip Sync Assassin Format</li>
-              <li>Added Tournament Of All Stars Format</li>
-              <li>Added All Stars 11 to Pre-Defined Casts</li>
-              <li>Added Banner to top of screen</li>
-            </ul>
-
-            <h3>v1.9.1 - Update</h3>
-            <ul>
-              <li>Added AS11 Cast Photos in Preperation for the v2.0 Update.</li>
-            </ul>            
-
-            <h3>v1.9.0 - Update</h3>
-            <ul>
-              <li>Added the mid-season LaLaPaRuza Smackdown (Toggleable in setup).</li>
-              <li>Changed Minimum Cast to 8</li>
-            </ul>
-
-            <h3>v1.8.0 - Update</h3>
-            <ul>
-              <li>Changed Girl Group Challenge Episode Cycle.</li>
-              <li>Added Team Names and new performance screens.</li>
-              <li>Added Season Dimention, With Non-Elimination Episode & Double Wins.</li>
-              <li>Fixed some issues with Late & Early Season Progression.</li>
-            </ul>
-
-            <h3>v1.7.0 - Update</h3>
-            <ul>
-              <li>Added "Choose Output" button to rig placements during Judging and Lip Syncs.</li>
-              <li>Added ability to rig Finale placements.</li>
-            </ul>
-
-            <h3>v1.6.1 - Update</h3>
-            <ul>
-              <li>Fixed Lip Sync Fatigue Issues</li>
-            </ul>
-
-            <h3>v1.6.0 - Update</h3>
-            <ul>
-              <li>Added Season Formats</li>
-              <li>Added Lip Sync fatigue: Many BTM2 Placements Force Elimination</li>
-              <li>Finale winner is now decided on a fairer basis</li>
-            </ul>
-
-            <h3>v1.5.5.1 - Bug Fixes</h3>
-            <ul>
-              <li>Fixed Some Unfair Queen Stats</li>        
-            </ul>
-            
-            <h3>v1.5.5 - Mini-Update</h3>
-            <ul>
-              <li>Changed Queen Loading System.</li>
-              <li>Queens Stats are No Longer Randomized.</li>             
-            </ul>
-
-            <h3>v1.5.0 - Update</h3>
-            <ul>
-              <li>Added 'Pre-Defined Casts'.</li>
-              <li>Fixed issues with some pictures.</li>
-              <li>Added new Lip Sync Songs.</li>
-            </ul>
-
-            <h3>v1.4.0 - Update</h3>
-            <ul>
-              <li>Edited Setup Screen UI.</li>
-              <li>Add Real RPDR Queens Feature.</li>
-              <li>Added new Lip Sync Songs.</li>
-            </ul>
-
-            <h3>v1.3.0 - Update</h3>
-            <ul>
-              <li>Added Premiere Format customization options.</li>
-              <li>Added Top 2 Premiere logic (Top 2 Lip Sync for the win).</li>
-              <li>Added Regular Premiere (No Elimination) logic.</li>
-            </ul>
-
-            <h3>v1.2.1 - Update</h3>
-            <ul>
-              <li>Increased maximum cast size to 16 queens.</li>
-            </ul>
-        
-            <h3>v1.2.0 - Update</h3>
-            <ul>
-              <li>Added Patch Notes modal to the home screen.</li>
-              <li>Added a "Suggest" button to easily submit Google Forms ideas.</li>
-              <li>Added new mini challenges.</li>
-            </ul>
-            
-            <h3>v1.1.1 - Bug Fix / v1.1.0 - Update</h3>
-            <ul>
-              <li>Fixed bug with double eliminations.</li>
-              <li>Added Top 3 and Top 4 Finale formats.</li>
-            </ul>
-   
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div id="rigModal" class="modal hidden">
       <div class="modal-content panel">
         <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center;">
@@ -1353,7 +1221,7 @@
           <div class="toggle-row">
             <div class="toggle-label-group">
               <span class="toggle-label-title">Non-Elimination Episodes</span>
-              <span class="toggle-label-desc">Once per season (usually late in the season), the bottom 2 lip sync for the win instead of going home. No one is eliminated.</span>
+              <span class="toggle-label-desc">Once per season (eps 5–7), the bottom 2 lip sync for the win instead of going home. No one is eliminated.</span>
             </div>
             <label class="toggle-switch">
               <input type="checkbox" id="nonElimToggle" />
@@ -1364,7 +1232,7 @@
           <div class="toggle-row">
             <div class="toggle-label-group">
               <span class="toggle-label-title">LaLaPaRuza Smackdown</span>
-              <span class="toggle-label-desc">A mid-season lip sync smackdown where all queens must lip sync to keep their spots in the competition.</span>
+              <span class="toggle-label-desc">A mid-season lip sync smackdown (ep 8) where eliminated queens battle to re-enter the competition.</span>
             </div>
             <label class="toggle-switch">
               <input type="checkbox" id="lalaPaRuzaToggle" />
@@ -1386,7 +1254,7 @@
           <div class="toggle-row">
             <div class="toggle-label-group">
               <span class="toggle-label-title">Disqualification (DISQ)</span>
-              <span class="toggle-label-desc">Very rarely (0.5% chance per elimination episode), a queen may be disqualified for breaking competition rules and asked to leave immediately. This will only happen on eligible episodes.</span>
+              <span class="toggle-label-desc">Very rarely (0.5% chance per elimination episode), a queen may be disqualified for breaking competition rules and asked to leave immediately. The bottom 2 still lip sync normally. Regular Season only — not available on premieres, LaLaPaRuza, or Non-Elim episodes.</span>
             </div>
             <label class="toggle-switch">
               <input type="checkbox" id="disqToggle" />
@@ -1397,7 +1265,7 @@
           <div class="toggle-row">
             <div class="toggle-label-group">
               <span class="toggle-label-title">Queen Quits (QUIT)</span>
-              <span class="toggle-label-desc">Rarely (2% chance per eligible episode), a queen announces during critiques that she wants to quit. She sashays away immediately. The episode then converts to a Top 2 format, The top two queens lip sync for the win. Only once per season. Regular Season only.</span>
+              <span class="toggle-label-desc">Rarely (2% chance per elimination episode), a queen announces during critiques that she wants to quit. She sashays away immediately. The episode then converts to a Top 2 format — the top two queens lip sync for the win, and all bottom queens receive a LOW placement instead. Only once per season. Regular Season only.</span>
             </div>
             <label class="toggle-switch">
               <input type="checkbox" id="quitToggle" />
@@ -1414,7 +1282,7 @@
             <div class="toggle-row" id="returnFormatRow" style="align-items: flex-start; flex-wrap: wrap;">
             <div class="toggle-label-group" style="flex: 1; min-width: 200px;">
               <span class="toggle-label-title">Returning Format</span>
-              <span class="toggle-label-desc">Choose whether an eliminated queen returns to the competition during the season. <strong>Random Return</strong>: one eliminated queen is chosen randomly. <strong>Queens Vote</strong>: the remaining queens each vote for who they want to return, if there's a tie, you decide. <strong>Choose Who Returns</strong>: you personally pick which eliminated queen comes back. Only happens on eligible episodes. Some queens who quit, departed or were disqualified are not eligible. Regular Season only.</span>
+              <span class="toggle-label-desc">Choose whether an eliminated queen returns to the competition during the season. <strong>Random Return</strong>: one eliminated queen is chosen randomly. <strong>Queens Vote</strong>: the remaining queens each vote for who they want to return — if there's a tie, you decide! <strong>Choose Who Returns</strong>: you personally pick which eliminated queen comes back. Cannot happen on premiere, Top 2, LaLaPaRuza, Final, or QUIT/DISQ/DEPT episodes. Queens who quit or were disqualified are not eligible. Regular Season only.</span>
             </div>
             <div style="min-width: 160px; flex-shrink: 0; margin-top: 2px;">
               <select id="returnFormatSelect" style="width: 100%; border: 1px solid var(--border); border-radius: 12px; padding: 10px 11px; font-size: 14px; background: #fbfff8; color: var(--ink); outline: none; -webkit-appearance: none; appearance: none; cursor: pointer;">
@@ -1740,7 +1608,6 @@
       finaleMeta: document.getElementById("finaleMeta"), finaleContent: document.getElementById("finaleContent"), finaleBtn: document.getElementById("finaleBtn"),
       
       preDefBtn: document.getElementById("preDefBtn"), closePreDefBtn: document.getElementById("closePreDefBtn"), preDefModal: document.getElementById("preDefModal"),
-      patchNotesBtn: document.getElementById("patchNotesBtn"), closePatchNotesBtn: document.getElementById("closePatchNotesBtn"), patchNotesModal: document.getElementById("patchNotesModal"),
       suggestBtn: document.getElementById("suggestBtn"), openCustomQueenBtn: document.getElementById("openCustomQueenBtn"), closeCustomQueenBtn: document.getElementById("closeCustomQueenBtn"), customQueenModal: document.getElementById("customQueenModal"),
       realQueenSearch: document.getElementById("realQueenSearch"), searchResults: document.getElementById("searchResults"), addRandomRealBtn: document.getElementById("addRandomRealBtn"),
       
@@ -1756,8 +1623,6 @@
     // Modal Events
     el.preDefBtn.addEventListener("click", () => el.preDefModal.classList.remove("hidden"));
     el.closePreDefBtn.addEventListener("click", () => el.preDefModal.classList.add("hidden"));
-    el.patchNotesBtn.addEventListener("click", () => el.patchNotesModal.classList.remove("hidden"));
-    el.closePatchNotesBtn.addEventListener("click", () => el.patchNotesModal.classList.add("hidden"));
     el.openCustomQueenBtn.addEventListener("click", () => el.customQueenModal.classList.remove("hidden"));
     el.closeCustomQueenBtn.addEventListener("click", () => el.customQueenModal.classList.add("hidden"));
     el.closeRigBtn.addEventListener("click", () => el.rigModal.classList.add("hidden"));
@@ -5342,6 +5207,8 @@ window.resolveTournamentTie = function(queenId) {
 
     updateSetupUI();
 
+    // ── SECRET DEBUG PANEL ────────────────────────────────────────────────────
+    // Access: click the version text 7 times quickly → code prompt appears
     // Code: WERKROOM
     // ─────────────────────────────────────────────────────────────────────────
     (function() {
