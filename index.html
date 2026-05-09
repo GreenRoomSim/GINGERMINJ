@@ -4305,11 +4305,6 @@ if (state.seasonFormat === "beaver" && n >= 6) {
                     <div class="flex-center">${_bp.highQueens.map(q => `<div class="placement-card bg-high">${escapeHtml(q.name)}</div>`).join("")}</div>
                     <p class="muted">Good job this week, you're safe.</p>
                   </div>` : ""}
-                  ${_bp.pureSafe.length ? `
-                  <div class="group-row">
-                    <div class="flex-center">${_bp.pureSafe.map(q => `<span class="placement-card small bg-safe">${escapeHtml(q.name)}</span>`).join("")}</div>
-                    <p class="muted">You are safe.</p>
-                  </div>` : ""}
                   <div class="group-row" style="border:none;">
                     <div class="flex-center">${_bp.bottomThree.map(q => `<div class="placement-card bg-btm">${escapeHtml(q.name)}</div>`).join("")}</div>
                     <p class="muted">I'm sorry my dears, but you three are the bottom queens of the week and face possible elimination.</p>
@@ -4531,7 +4526,7 @@ if (state.seasonFormat === "beaver" && n >= 6) {
         const _btPremiere = (state.episodeNumber === 1);
         const _btLeaving = state.episodeData.isBeaverLeaving;
         if (_btPremiere && _btLeaving) totalPhases = 10;
-        else if (_btPremiere || _btLeaving) totalPhases = 9;
+        else if (_btPremiere) totalPhases = 9;
         else totalPhases = 8;
       }
       // Premiere intro screens add 2 phases to episode 1 for eligible formats
