@@ -1348,7 +1348,7 @@
         <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center;">
           <div>
             <h2 style="margin:0;">Extra Options</h2>
-            <div class="meta">Optional season toggles — customise your experience.</div>
+            <div class="meta">Optional season toggles, customise your experience.</div>
           </div>
           <button id="closeExtraOptionsBtn" class="ghost" style="padding: 6px 12px;">Close</button>
         </div>
@@ -1390,7 +1390,7 @@
           <div class="toggle-row">
             <div class="toggle-label-group">
               <span class="toggle-label-title">Disqualification (DISQ)</span>
-              <span class="toggle-label-desc">Very rarely (0.5% chance per elimination episode), a queen may be disqualified for breaking competition rules and asked to leave immediately. The bottom 2 still lip sync normally. Regular Season only — not available on premieres, LaLaPaRuza, or Non-Elim episodes.</span>
+              <span class="toggle-label-desc">Very rarely (0.5% chance per elimination episode), a queen may be disqualified for breaking competition rules and asked to leave immediately. The bottom 2 still lip sync normally. Regular Season only, not available on premieres, LaLaPaRuza, or Non-Elim episodes.</span>
             </div>
             <label class="toggle-switch">
               <input type="checkbox" id="disqToggle" />
@@ -1401,7 +1401,7 @@
           <div class="toggle-row">
             <div class="toggle-label-group">
               <span class="toggle-label-title">Queen Quits (QUIT)</span>
-              <span class="toggle-label-desc">Rarely (2% chance per elimination episode), a queen announces during critiques that she wants to quit. She sashays away immediately. The episode then converts to a Top 2 format — the top two queens lip sync for the win, and all bottom queens receive a LOW placement instead. Only once per season. Regular Season only.</span>
+              <span class="toggle-label-desc">Rarely (2% chance per elimination episode), a queen announces during critiques that she wants to quit. She sashays away immediately. The episode then converts to a Top 2 format, with the top two queens lip syncing for the win, and all bottom queens receiving a LOW placement instead. Only once per season. Regular Season only.</span>
             </div>
             <label class="toggle-switch">
               <input type="checkbox" id="quitToggle" />
@@ -1418,7 +1418,7 @@
             <div class="toggle-row" id="returnFormatRow" style="align-items: flex-start; flex-wrap: wrap;">
             <div class="toggle-label-group" style="flex: 1; min-width: 200px;">
               <span class="toggle-label-title">Returning Format</span>
-              <span class="toggle-label-desc">Choose whether an eliminated queen returns to the competition during the season. <strong>Random Return</strong>: one eliminated queen is chosen randomly. <strong>Queens Vote</strong>: the remaining queens each vote for who they want to return — if there's a tie, you decide! <strong>Choose Who Returns</strong>: you personally pick which eliminated queen comes back. Cannot happen on premiere, Top 2, LaLaPaRuza, Final, or QUIT/DISQ/DEPT episodes. Queens who quit or were disqualified are not eligible. Regular Season only.</span>
+              <span class="toggle-label-desc">Choose whether an eliminated queen returns to the competition during the season. <strong>Random Return</strong>: one eliminated queen is chosen randomly. <strong>Queens Vote</strong>: the remaining queens each vote for who they want to return, and if there's a tie, you decide! <strong>Choose Who Returns</strong>: you personally pick which eliminated queen comes back. Cannot happen on premiere, Top 2, LaLaPaRuza, Final, or QUIT/DISQ/DEPT episodes. Queens who quit or were disqualified are not eligible. Regular Season only.</span>
             </div>
             <div style="min-width: 160px; flex-shrink: 0; margin-top: 2px;">
               <select id="returnFormatSelect" style="width: 100%; border: 1px solid var(--border); border-radius: 12px; padding: 10px 11px; font-size: 14px; background: #fbfff8; color: var(--ink); outline: none; -webkit-appearance: none; appearance: none; cursor: pointer;">
@@ -1568,7 +1568,7 @@
           link.href = canvas.toDataURL("image/png");
           link.click();
         })
-        .catch(function() { alert("Could not generate image — this may be due to browser security restrictions on external images."); });
+        .catch(function() { alert("Could not generate image, this may be due to browser security restrictions on external images."); });
     }
 
     const MIN_CAST = 8;
@@ -2296,7 +2296,7 @@ if (state.seasonFormat === "beaver" && n >= 6) {
 
         state.episodeData = {
           mini, maxi, scores, categories,
-          placements: { winners, highQueens, pureSafe, bottomThree, beaverSaved, bottomTwo },
+          placements: { winners, highQueens, pureSafe, bottomThree, beaverSaved, savedLow: (n === 6) ? beaverSaved : null, bottomTwo },
           lipSync,
           countsApplied: false, beaverBtm3Applied: false, elimination: null, riggedOutcome: null,
           isBeaverEpisode: true,
@@ -3045,7 +3045,7 @@ if (state.seasonFormat === "beaver" && n >= 6) {
         const _bPremiere = (state.episodeNumber === 1);
         const _bLeaving = data.isBeaverLeaving;
         if (_bPremiere && _bLeaving) totalScreens = 10;
-        else if (_bPremiere || _bLeaving) totalScreens = 9;
+        else if (_bPremiere) totalScreens = 9;
         else totalScreens = 8;
       }
       if (data.isChooseReturn && !isGG && !data.isLaLaPaRuza && !isAssassin && !data.isQuit) {
@@ -3139,11 +3139,10 @@ if (state.seasonFormat === "beaver" && n >= 6) {
         } else if (_bLeaving && !_bPremiere) {
           if (state.phase === 3) phaseTag = "beaver_tops";
           else if (state.phase === 4) phaseTag = "beaver_leaving";
-          else if (state.phase === 5) phaseTag = "beaver_results";
-          else if (state.phase === 6) phaseTag = "beaver_give";
-          else if (state.phase === 7) phaseTag = "beaver_lipsync";
-          else if (state.phase === 8) phaseTag = "beaver_elim";
-          else if (state.phase === 9) phaseTag = 7;
+          else if (state.phase === 5) phaseTag = 4;
+          else if (state.phase === 6) phaseTag = 5;
+          else if (state.phase === 7) phaseTag = 6;
+          else if (state.phase === 8) phaseTag = 7;
         } else if (_bPremiere && _bLeaving) {
           if (state.phase === 3) phaseTag = "beaver_announce";
           else if (state.phase === 4) phaseTag = "beaver_leaving";
@@ -4171,7 +4170,7 @@ if (state.seasonFormat === "beaver" && n >= 6) {
                     : ""}
                   <div class="placement-card bg-return" style="font-size: 20px; padding: 16px 32px;">${escapeHtml(data.returnQueen.name)}</div>
                 </div>
-                <p class="muted">Welcome back to the competition. Your journey continues — don't waste this chance!</p>
+                <p class="muted">Welcome back to the competition. Your journey continues, so don't waste this chance!</p>
               </div>
             ` : `
               <div class="section-card flex-col-center">
@@ -4668,7 +4667,7 @@ if (state.seasonFormat === "beaver" && n >= 6) {
           } else if (f.step === 2) {
               content = `
                 <div class="section-card flex-col-center">
-                  <div class="label-row"><span class="pill">Round 1 — Quarter Finals</span></div>
+                  <div class="label-row"><span class="pill">Round 1: Quarter Finals</span></div>
                   <p class="big-message">Round 1 Matchups</p>
                   <div class="flex-col-center" style="width:100%; gap:14px; margin-top:14px;">
                     <div class="group-row">
@@ -4725,7 +4724,7 @@ if (state.seasonFormat === "beaver" && n >= 6) {
           } else if (f.step === 4) {
               content = `
                 <div class="section-card flex-col-center">
-                  <div class="label-row"><span class="pill">Round 2 — Semi Finals</span></div>
+                  <div class="label-row"><span class="pill">Round 2: Semi Finals</span></div>
                   <p class="big-message">Round 2 Matchups</p>
                   <p class="muted">The winners advance to the Final!</p>
                   <div class="flex-col-center" style="width:100%; gap:14px; margin-top:14px;">
@@ -4907,7 +4906,7 @@ if (state.seasonFormat === "beaver" && n >= 6) {
               <div class="section-card flex-col-center">
                 <div class="label-row"><span class="pill">Top 4</span></div>
                 <p class="big-message">Tonight's Matchups</p>
-                <p class="muted" style="margin-bottom:16px;">Four queens, two lip syncs — only two will advance to the final!</p>
+                <p class="muted" style="margin-bottom:16px;">Four queens, two lip syncs, and only two will advance to the final!</p>
                 <div class="flex-col-center" style="width:100%; gap:16px;">
                   <div class="group-row">
                     <p class="muted" style="font-weight:800; margin:0;">Lip Sync 1</p>
@@ -5088,7 +5087,7 @@ if (state.seasonFormat === "beaver" && n >= 6) {
                 <p class="big-message" style="color:#00cccc;">Miss Congeniality</p>
                 ${f.missCon ? `
                   <div class="placement-card bg-miss-con" style="font-size:18px; padding:16px 32px; margin-top:12px;">${escapeHtml(f.missCon.name)}</div>
-                  <p class="muted" style="margin-top:12px;">Congratulations — the queens have spoken!</p>
+                  <p class="muted" style="margin-top:12px;">Congratulations, the queens have spoken!</p>
                 ` : `<p class="muted">No eligible queens for this award.</p>`}
               </div>
             `;
@@ -5857,7 +5856,7 @@ window.resolveTournamentTie = function(queenId) {
         panelModal.classList.add("hidden");
         refreshDebugState();
         renderEpisode();
-        alert(`✅ DEPT forced on: ${ed.deptQueen.name}\nPhase rewound to 4 — click Next to proceed through the lip sync.`);
+        alert(`✅ DEPT forced on: ${ed.deptQueen.name}\nPhase rewound to 4, click Next to proceed through the lip sync.`);
       });
 
       // ── Force DEPT on NEXT episode ──
@@ -5917,7 +5916,7 @@ window.resolveTournamentTie = function(queenId) {
         panelModal.classList.add("hidden");
         refreshDebugState();
         renderEpisode();
-        alert(`✅ DISQ forced on: ${ed.disqQueen.name}\nPhase rewound to 4 — click Next to proceed through the lip sync.`);
+        alert(`✅ DISQ forced on: ${ed.disqQueen.name}\nPhase rewound to 4, click Next to proceed through the lip sync.`);
       });
 
       // ── Force DISQ on NEXT episode ──
@@ -5969,7 +5968,7 @@ window.resolveTournamentTie = function(queenId) {
         panelModal.classList.add("hidden");
         refreshDebugState();
         renderEpisode();
-        alert(`✅ QUIT forced on: ${ed.quitQueen.name}\nPhase rewound to 3 — click Next to see the shock announcement.`);
+        alert(`✅ QUIT forced on: ${ed.quitQueen.name}\nPhase rewound to 3, click Next to see the shock announcement.`);
       });
 
       // ── Force QUIT on NEXT episode ──
