@@ -521,6 +521,58 @@
       transform: none;
     }
 
+    /* Format Card Buttons */
+    .format-card-btn {
+      background: #fbfff8;
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 800;
+      padding: 12px 8px;
+      cursor: pointer;
+      text-align: center;
+      line-height: 1.35;
+      transition: all 0.15s;
+      box-shadow: 0 2px 6px rgba(76,110,50,0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .format-card-btn .fmt-icon { font-size: 20px; line-height: 1; }
+    .format-card-btn:hover {
+      background: var(--lime-3);
+      border-color: var(--lime);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(76,110,50,0.12);
+    }
+    .format-card-btn.active {
+      background: linear-gradient(180deg, var(--lime), #76d939);
+      border-color: #5eba28;
+      color: #14380e;
+      box-shadow: 0 4px 12px rgba(76,110,50,0.22);
+    }
+    .change-format-btn {
+      background: var(--lime-3);
+      border: 1px solid var(--lime);
+      border-radius: 10px;
+      color: #2a5216;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 7px 11px;
+      cursor: pointer;
+      box-shadow: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .change-format-btn:hover {
+      background: var(--lime);
+      transform: none;
+    }
+
     /* Toggle Switch */
     .toggle-row {
       display: flex;
@@ -1421,27 +1473,6 @@
             </label>
           </div>
 
-          <div style="position: relative;">
-            <div id="returnFormatOverlay" class="hidden" style="position: absolute; inset: -5px; background: rgba(238, 251, 231, 0.7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 10; display: flex; align-items: center; justify-content: center; border-radius: 12px; border: 2px solid var(--border); pointer-events: none; transition: all 0.3s ease;">
-              <div style="background: var(--card); padding: 8px 16px; border-radius: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; align-items: center; gap: 8px;">
-                <span style="color: var(--muted); font-weight: 600; font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase;">Regular Season Only</span>
-              </div>
-            </div>
-            <div class="toggle-row" id="returnFormatRow" style="align-items: flex-start; flex-wrap: wrap;">
-            <div class="toggle-label-group" style="flex: 1; min-width: 200px;">
-              <span class="toggle-label-title">Returning Format</span>
-              <span class="toggle-label-desc">Choose whether an eliminated queen returns to the competition during the season. <strong>Random Return</strong>: one eliminated queen is chosen randomly. <strong>Queens Vote</strong>: the remaining queens each vote for who they want to return, and if there's a tie, you decide! <strong>Choose Who Returns</strong>: you personally pick which eliminated queen comes back. Cannot happen on premiere, Top 2, LaLaPaRuza, Final, or QUIT/DISQ/DEPT episodes. Queens who quit or were disqualified are not eligible. Regular Season only.</span>
-            </div>
-            <div style="min-width: 160px; flex-shrink: 0; margin-top: 2px;">
-              <select id="returnFormatSelect" style="width: 100%; border: 1px solid var(--border); border-radius: 12px; padding: 10px 11px; font-size: 14px; background: #fbfff8; color: var(--ink); outline: none; -webkit-appearance: none; appearance: none; cursor: pointer;">
-                <option value="none">No Return</option>
-                <option value="random">Random Return</option>
-                <option value="vote">Remaining Queens Vote</option>
-                <option value="choose">Choose Who Returns</option>
-              </select>
-            </div>
-            </div>
-          </div> <!-- end returnFormatRow relative wrapper -->
 
         </div>
       </div>
@@ -1471,33 +1502,51 @@
 
               <hr style="border: 0; border-top: 1px solid var(--border); margin: 12px 0;" />
 
-              <label class="field" style="margin-top: 4px;">Season Format
-                <select id="seasonFormatSelect">
-                  <option value="regular">Regular Season</option>
-                  <option value="all-stars-legacy">All Stars (Lip Sync For Your Legacy)</option>
-                  <option value="all-stars-assassin">All Stars (Lip Sync Assassin)</option>
-                  <option value="tournament-of-all-stars">Tournament Of All Stars</option>
-                  <option value="beaver">Canada's Drag Race (Beaver Format)</option>
-                </select>
-              </label>
-              
-              <div id="extraSettingsWrapper" style="position: relative; display: grid; gap: 10px; margin-top: 4px;">
+              <!-- Hidden native select kept for JS compatibility -->
+              <select id="seasonFormatSelect" class="hidden">
+                <option value="regular">Regular Season</option>
+                <option value="all-stars-legacy">All Stars (Lip Sync For Your Legacy)</option>
+                <option value="all-stars-assassin">All Stars (Lip Sync Assassin)</option>
+                <option value="tournament-of-all-stars">Tournament Of All Stars</option>
+                <option value="beaver">Canada's Drag Race (Beaver Format)</option>
+              </select>
 
-                <!-- Full overlay: Tournament Of All Stars -->
-                <div id="tournamentOverlay" class="hidden" style="position: absolute; inset: -5px; background: rgba(238, 251, 231, 0.7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 10; display: flex; align-items: center; justify-content: center; border-radius: 12px; border: 2px solid var(--border); pointer-events: none; transition: all 0.3s ease;">
-                  <div style="background: var(--card); padding: 8px 16px; border-radius: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; align-items: center; gap: 8px;">
-                    <span style="color: var(--muted); font-weight: 600; font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase;">Other Settings Locked For This Format</span>
-                  </div>
+              <!-- ── Format Selector Panel (before a format is chosen) ── -->
+              <div id="formatSelectorPanel">
+                <p class="subtle" style="margin: 0 0 8px; font-size: 12px; text-align: center;">Select a season format to begin</p>
+                <div id="formatCardGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                  <button class="format-card-btn" data-format="regular">
+                    <span class="fmt-icon">🎭</span>Regular
+                  </button>
+                  <button class="format-card-btn" data-format="beaver">
+                    <span class="fmt-icon">🦫</span>Beaver (CDR)
+                  </button>
+                  <button class="format-card-btn" data-format="all-stars-legacy">
+                    <span class="fmt-icon">⭐</span>All Stars Legacy
+                  </button>
+                  <button class="format-card-btn" data-format="all-stars-assassin">
+                    <span class="fmt-icon">🗡️</span>All Stars Assassin
+                  </button>
+                  <button class="format-card-btn" data-format="tournament-of-all-stars" style="grid-column: 1 / -1; flex-direction: row; justify-content: center; padding: 10px 8px;">
+                    <span class="fmt-icon">🏆</span>Tournament Of All Stars
+                  </button>
                 </div>
+                <div style="margin-top: 10px; padding: 14px 12px; border-radius: 14px; background: #f8fff3; border: 1px dashed var(--border); color: var(--muted); font-size: 13px; text-align: center; line-height: 1.55;">
+                  <strong style="color: var(--ink); display: block; margin-bottom: 3px;">Choose Season Format First</strong>
+                  Premiere, finale &amp; other options will appear here once you pick a format above.
+                </div>
+              </div>
 
-                <!-- Partial overlay: Lip Sync Assassin (covers premiere + extra options only) -->
-                <div id="assassinLockWrapper" style="position: relative; display: grid; gap: 10px;">
-                  <div id="assassinOverlay" class="hidden" style="position: absolute; inset: -5px; background: rgba(238, 251, 231, 0.7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 10; display: flex; align-items: center; justify-content: center; border-radius: 12px; border: 2px solid var(--border); pointer-events: none; transition: all 0.3s ease;">
-                    <div style="background: var(--card); padding: 8px 16px; border-radius: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; align-items: center; gap: 8px;">
-                      <span style="color: var(--muted); font-weight: 600; font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase;">Some Settings Locked For This Format</span>
-                    </div>
-                  </div>
+              <!-- ── Settings Panel (shown after format is chosen) ── -->
+              <div id="settingsPanel" class="hidden" style="display: grid; gap: 10px;">
 
+                <!-- Change format row -->
+                <button id="changeFormatBtn" class="change-format-btn">
+                  ← Change Format &nbsp;·&nbsp; <span id="chosenFormatLabel" style="font-weight: 900;"></span>
+                </button>
+
+                <!-- Premiere Format (hidden for Assassin + Tournament) -->
+                <div id="premiereSection" class="hidden">
                   <label class="field">Premiere Format
                     <select id="premiereFormatSelect">
                       <option value="regular">Regular Premiere</option>
@@ -1505,16 +1554,40 @@
                       <option value="top2">Top 2 Premiere (Lip Sync for the Win)</option>
                     </select>
                   </label>
+                </div>
 
+                <!-- Returning Format — visible for Regular only -->
+                <div id="returnFormatSection" class="hidden">
+                  <label class="field">Returning Format
+                    <select id="returnFormatSelect" style="width: 100%; border: 1px solid var(--border); border-radius: 12px; padding: 10px 11px; font-size: 14px; background: #fbfff8; color: var(--ink); outline: none; -webkit-appearance: none; appearance: none; cursor: pointer;">
+                      <option value="none">No Return</option>
+                      <option value="random">Random Return</option>
+                      <option value="vote">Remaining Queens Vote</option>
+                      <option value="choose">Choose Who Returns</option>
+                    </select>
+                  </label>
+                </div>
+
+                <!-- Extra Options — Regular only -->
+                <div id="extraOptionsSection" class="hidden">
                   <button id="openExtraOptionsBtn" class="extra-options-btn">⚙️ Open Extra Options</button>
                 </div>
 
-                <label class="field">Finale Format
-                  <select id="finaleFormatSelect">
-                    <option value="top4">Top 4 Finale (Lip Sync Smackdown)</option>
-                    <option value="top3">Top 3 Finale</option>
-                  </select>
-                </label>
+                <!-- Finale Format (hidden for Tournament) -->
+                <div id="finaleSection" class="hidden">
+                  <label class="field">Finale Format
+                    <select id="finaleFormatSelect">
+                      <option value="top4">Top 4 Finale (Lip Sync Smackdown)</option>
+                      <option value="top3">Top 3 Finale</option>
+                    </select>
+                  </label>
+                </div>
+
+                <!-- Tournament message — shown instead of options -->
+                <div id="tournamentMsg" class="hidden" style="padding: 14px 12px; border-radius: 14px; background: #f8fff3; border: 1px dashed var(--border); color: var(--muted); font-size: 13px; text-align: center; line-height: 1.55;">
+                  No other options are available for this format.<br>
+                  <strong style="color: var(--ink);">Start season below.</strong>
+                </div>
 
               </div>
               <button id="startBtn" class="primary" disabled>Start Season</button>
@@ -1787,10 +1860,6 @@
 
     // Extra Options Modal
     document.getElementById("openExtraOptionsBtn").addEventListener("click", () => {
-      // Sync returning format overlay with current season format
-      const isRegular = el.seasonFormatSelect.value === "regular";
-      document.getElementById("returnFormatOverlay").classList.toggle("hidden", isRegular);
-      document.getElementById("returnFormatSelect").disabled = !isRegular;
       document.getElementById("extraOptionsModal").classList.remove("hidden");
     });
     document.getElementById("closeExtraOptionsBtn").addEventListener("click", () => {
@@ -2040,6 +2109,10 @@
     }
 
     function startSeason() {
+      // Guard: ensure a format has been chosen via the card picker
+      if (document.getElementById("settingsPanel").classList.contains("hidden")) {
+        return alert("Please choose a Season Format before starting.");
+      }
       if (el.seasonFormatSelect.value === "tournament-of-all-stars") {
       if (state.queens.length !== 18) {
         return alert("Tournament Of All Stars requires exactly 18 queens to start!");
@@ -2050,8 +2123,10 @@
       }
     }
       state.seasonFormat = el.seasonFormatSelect.value;
-      state.finaleFormat = el.finaleFormatSelect.value;
+      state.finaleFormat = el.finaleFormatSelect ? el.finaleFormatSelect.value : "top4";
       state.premiereFormat = el.premiereFormatSelect.value;
+      // CA6 Premiere is a placeholder — fall back to regular behaviour until implemented
+      if (state.premiereFormat === "ca6-premiere") state.premiereFormat = "regular";
       state.lalaPaRuzaEnabled = document.getElementById("lalaPaRuzaToggle").checked;
       state.deptEnabled = document.getElementById("deptToggle").checked;
       state.disqEnabled = document.getElementById("disqToggle").checked;
@@ -5708,42 +5783,82 @@ if (state.seasonFormat === "beaver" && n >= 6) {
     }
 
     // Toggle the clean overlay when Tournament or Lip Sync Assassin mode is active
-    el.seasonFormatSelect.addEventListener("change", (e) => {
-      const val = e.target.value;
-      const isTournament = val === "tournament-of-all-stars";
-      const isAssassin = val === "all-stars-assassin";
-      const isBeaver = val === "beaver";
-      const isRegular = val === "regular";
+    // ── FORMAT CARD PICKER ─────────────────────────────────────────────────
+    const formatLabelsMap = {
+      "regular":               "Regular Season",
+      "beaver":                "Beaver (CDR)",
+      "all-stars-legacy":      "All Stars Legacy",
+      "all-stars-assassin":    "All Stars Assassin",
+      "tournament-of-all-stars": "Tournament Of All Stars"
+    };
 
-      const tournamentOverlay = document.getElementById("tournamentOverlay");
-      const assassinOverlay = document.getElementById("assassinOverlay");
-      const extraSelects = document.querySelectorAll("#extraSettingsWrapper select");
-      const premiereSelect = document.getElementById("premiereFormatSelect");
-      const finaleSelect = document.getElementById("finaleFormatSelect");
-      const returnFormatSelect = document.getElementById("returnFormatSelect");
+    function applyFormatUI(format) {
+      // Keep the hidden native select in sync so existing startSeason() code works
+      el.seasonFormatSelect.value = format;
 
-      tournamentOverlay.classList.toggle("hidden", !isTournament);
-      extraSelects.forEach(sel => {
-        sel.disabled = isTournament;
-        sel.style.opacity = isTournament ? "0.5" : "1";
-      });
+      // Update the label in the "change format" button
+      document.getElementById("chosenFormatLabel").textContent = formatLabelsMap[format] || format;
 
-      assassinOverlay.classList.toggle("hidden", !isAssassin && !isBeaver);
-      if (!isTournament) {
-        premiereSelect.disabled = isAssassin || isBeaver;
-        premiereSelect.style.opacity = (isAssassin || isBeaver) ? "0.5" : "1";
-        finaleSelect.disabled = false;
-        finaleSelect.style.opacity = "1";
+      // Swap panels
+      document.getElementById("formatSelectorPanel").classList.add("hidden");
+      document.getElementById("settingsPanel").classList.remove("hidden");
+
+      // Reset all sections to hidden
+      const premiereSection    = document.getElementById("premiereSection");
+      const returnSection      = document.getElementById("returnFormatSection");
+      const extraSection       = document.getElementById("extraOptionsSection");
+      const finaleSection      = document.getElementById("finaleSection");
+      const tournamentMsg      = document.getElementById("tournamentMsg");
+      const premiereSelect     = document.getElementById("premiereFormatSelect");
+
+      [premiereSection, returnSection, extraSection, finaleSection, tournamentMsg].forEach(el => el.classList.add("hidden"));
+
+      if (format === "regular") {
+        premiereSelect.innerHTML = `
+          <option value="regular">Regular Premiere</option>
+          <option value="no-elim">Regular Premiere (No Elimination)</option>
+          <option value="top2">Top 2 Premiere (Lip Sync for the Win)</option>
+        `;
+        premiereSection.classList.remove("hidden");
+        returnSection.classList.remove("hidden");
+        extraSection.classList.remove("hidden");
+        finaleSection.classList.remove("hidden");
+
+      } else if (format === "beaver") {
+        premiereSelect.innerHTML = `
+          <option value="regular">Regular Premiere</option>
+          <option value="ca6-premiere">CA6 Premiere (Placeholder)</option>
+        `;
+        premiereSection.classList.remove("hidden");
+        finaleSection.classList.remove("hidden");
+
+      } else if (format === "all-stars-legacy") {
+        premiereSelect.innerHTML = `
+          <option value="regular">Regular Premiere</option>
+          <option value="no-elim">Regular Premiere (No Elimination)</option>
+        `;
+        premiereSection.classList.remove("hidden");
+        finaleSection.classList.remove("hidden");
+
+      } else if (format === "all-stars-assassin") {
+        finaleSection.classList.remove("hidden");
+
+      } else if (format === "tournament-of-all-stars") {
+        tournamentMsg.classList.remove("hidden");
       }
+    }
 
-      const returnFormatOverlay = document.getElementById("returnFormatOverlay");
-      const returnFormatOverlayActive = !isRegular;
-      returnFormatOverlay.classList.toggle("hidden", !returnFormatOverlayActive);
-      returnFormatSelect.disabled = returnFormatOverlayActive;
-      if (!isRegular) {
-        returnFormatSelect.value = "none";
-        state.returnFormat = "none";
-      }
+    // Format card click handlers
+    document.querySelectorAll(".format-card-btn").forEach(btn => {
+      btn.addEventListener("click", () => applyFormatUI(btn.dataset.format));
+    });
+
+    // "Change Format" button — go back to the selector
+    document.getElementById("changeFormatBtn").addEventListener("click", () => {
+      document.getElementById("formatSelectorPanel").classList.remove("hidden");
+      document.getElementById("settingsPanel").classList.add("hidden");
+      // Reset hidden select to a blank state so startSeason won't fire with stale format
+      el.seasonFormatSelect.value = "regular";
     });
     el.randomizeQueenBtn.addEventListener("click", randomizeQueenForm);
     el.addQueenBtn.addEventListener("click", addQueenFromForm);
