@@ -223,7 +223,7 @@
     }
     .bg-low { background: #ffaea4 !important; color: #000000 !important; border: none;
     }
-    .bg-low-b { background: #ffaea4 !important; color: #000000 !important; border: none; box-shadow: inset 0 0 0 2px #FFD705;
+    .bg-low-b { background: #ffb6c1 !important; color: #000000 !important; border: none; box-shadow: inset 0 0 0 3px #d7b45a;
     }
     .bg-btm { background: #d30000 !important; color: #000000 !important; border: none;
     }
@@ -2663,6 +2663,8 @@ if (state.seasonFormat === "beaver" && n >= 6) {
                           !hadDisq(q) &&
                           !hadDept(q)
                       );
+                      if (eligibleReturners.length > 0) {
+                          const returnQueen = pick(eligibleReturners);
                           ed.isReturn = true;
                           ed.returnQueen = returnQueen;
                           ed.returnApplied = false;
@@ -2749,6 +2751,7 @@ if (state.seasonFormat === "beaver" && n >= 6) {
               }
           }
       }
+    } // end prepareEpisode
 
     function renderTournamentBracket() {
     const d = state.episodeData;
